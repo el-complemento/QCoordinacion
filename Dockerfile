@@ -8,19 +8,16 @@ COPY ./entrypoint.sh ./entrypoint.sh
 
 RUN chmod +x ./entrypoint.sh
 
-# Copiando los package.json para instalar dependencias
-COPY package*.json ./
+# Agregando los archivos del proyecto. TODO: Probar si es necesario
+ADD . .
 
 # Instalando dependencias
 RUN npm install -g npm
 RUN npm config set registry http://registry.npmjs.org/
-RUN npm install -d
-
-# Agregando los archivos del proyecto. TODO: Probar si es necesario
-ADD . .
+RUN npm install
 
 # Exponiendo el puerto 3000. TODO: Probar si es necesario
-EXPOSE 5173
+EXPOSE 3000
 
 ENTRYPOINT ["sh", "entrypoint.sh" ]
 
