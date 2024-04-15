@@ -4,13 +4,8 @@ WORKDIR /app
 # Copiando el proyecto entero a la carpeta actual
 COPY . .
 
-# Recibiendo argumentos para las variables de entorno
-
-#RUN apk update
 # Instalando dependencias y haciendo el build
 RUN npm install -g npm
-RUN npm cache clear --force
-RUN npm config set registry http://registry.npmjs.org/
 RUN npm install -d && npm run build
 
 # Imagen a utilizard

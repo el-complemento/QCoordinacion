@@ -1,9 +1,9 @@
-FROM node:18-bullseye
+FROM node:21-bookworm
 
 # CONTAINER_SOURCE_PATH
 WORKDIR /var/www/html
 
-# Copiando script
+# Copiando script entrypoint
 COPY ./entrypoint.sh ./entrypoint.sh
 
 RUN chmod +x ./entrypoint.sh
@@ -13,8 +13,9 @@ ADD . .
 
 # Instalando dependencias
 RUN npm install -g npm
-RUN npm config set registry http://registry.npmjs.org/
 RUN npm install
+
+RUN npm install -g vite
 
 # Exponiendo el puerto 3000. TODO: Probar si es necesario
 EXPOSE 3000
