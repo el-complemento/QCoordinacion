@@ -1,7 +1,6 @@
 {
   "name": "q-coordinacion-web",
   "private": true,
-  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite --port 3000",
