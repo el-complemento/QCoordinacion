@@ -5,7 +5,7 @@ WORKDIR /var/www/html
 
 
 # Copiando script entrypoint
-COPY ./entrypoint.sh ./entrypoint.sh
+#COPY ./entrypoint.sh ./entrypoint.sh
 COPY ./package.json .
 
 # Instalando dependencias
@@ -16,9 +16,9 @@ RUN npm install
 ADD . .
 
 
-RUN chmod +x ./entrypoint.sh
+#RUN chmod +x ./entrypoint.sh
 
-ENTRYPOINT ["sh", "./entrypoint.sh" ]
+#ENTRYPOINT ["sh", "./entrypoint.sh" ]
 
 # Exponiendo el puerto 3000. TODO: Probar si es necesario
 EXPOSE 3000
