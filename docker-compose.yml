@@ -2,7 +2,7 @@ services:
   web:
     container_name: qcoordinacion-web
     build:
-      dockerfile: ./docker/Dockerfile
+      dockerfile: ./Dockerfile
     env_file:
       - .env
     volumes:
