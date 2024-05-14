@@ -20,13 +20,13 @@ export default function AuthLoginForm() {
   const [showPassword, setShowPassword] = useState(false);
 
   const LoginSchema = Yup.object().shape({
-    email: Yup.string().required('Email is required').email('Email must be a valid email address'),
-    password: Yup.string().required('Password is required'),
+    username: Yup.string().required('El nombre de usuario es obligatorio.'),
+    password: Yup.string().required('La contraseña es obligatoria.'),
   });
 
   const defaultValues = {
-    email: 'demo@minimals.cc',
-    password: 'demo1234',
+    username: '',
+    password: '',
   };
 
   const methods = useForm({
@@ -43,7 +43,7 @@ export default function AuthLoginForm() {
 
   const onSubmit = async (data) => {
     try {
-      await login(data.email, data.password);
+      await login(data.username, data.password);
     } catch (error) {
       console.error(error);
 
@@ -61,11 +61,11 @@ export default function AuthLoginForm() {
       <Stack spacing={3}>
         {!!errors.afterSubmit && <Alert severity="error">{errors.afterSubmit.message}</Alert>}
 
-        <RHFTextField name="email" label="Email address" />
+        <RHFTextField name="username" label="Nombre de usuario" />
 
         <RHFTextField
           name="password"
-          label="Password"
+          label="Contraseña"
           type={showPassword ? 'text' : 'password'}
           InputProps={{
             endAdornment: (
@@ -81,7 +81,7 @@ export default function AuthLoginForm() {
 
       <Stack alignItems="flex-end" sx={{ my: 2 }}>
         <Link variant="body2" color="inherit" underline="always">
-          Forgot password?
+          ¿Olvidó su contraseña?
         </Link>
       </Stack>
 
@@ -101,7 +101,7 @@ export default function AuthLoginForm() {
           },
         }}
       >
-        Login
+        Autenticarse
       </LoadingButton>
     </FormProvider>
   );

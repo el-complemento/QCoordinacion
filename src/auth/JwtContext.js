@@ -1,174 +1,60 @@
-import PropTypes from 'prop-types';
-import { createContext, useEffect, useReducer, useCallback, useMemo } from 'react';
-// utils
-import axios from '../utils/axios';
-import localStorageAvailable from '../utils/localStorageAvailable';
-//
-import { isValidToken, setSession } from './utils';
+import { createContext, useContext, useEffect, useReducer } from 'react';
+import { useSession, signOut as nextAuthSignOut } from 'next-auth/react';
 
-// ----------------------------------------------------------------------
-
-// NOTE:
-// We only build demo at basic level.
-// Customer will need to do some extra handling yourself if you want to extend the logic and other features...
-
-// ----------------------------------------------------------------------
+export const AuthContext = createContext(null);
 
 const initialState = {
   isInitialized: false,
   isAuthenticated: false,
   user: null,
+  isLoading: true,
 };
 
 const reducer = (state, action) => {
-  if (action.type === 'INITIAL') {
-    return {
-      isInitialized: true,
-      isAuthenticated: action.payload.isAuthenticated,
-      user: action.payload.user,
-    };
+  switch (action.type) {
+    case 'INITIAL':
+      return {
+        ...state,
+        isInitialized: true,
+        isAuthenticated: action.isAuthenticated,
+        user: action.user,
+        isLoading: action.isLoading,  // Controlar la carga basado en la acción
+      };
+    case 'LOGOUT':
+      return {
+        ...state,
+        isAuthenticated: false,
+        user: null,
+      };
+    default:
+      return state;
   }
-  if (action.type === 'LOGIN') {
-    return {
-      ...state,
-      isAuthenticated: true,
-      user: action.payload.user,
-    };
-  }
-  if (action.type === 'REGISTER') {
-    return {
-      ...state,
-      isAuthenticated: true,
-      user: action.payload.user,
-    };
-  }
-  if (action.type === 'LOGOUT') {
-    return {
-      ...state,
-      isAuthenticated: false,
-      user: null,
-    };
-  }
-
-  return state;
-};
-
-// ----------------------------------------------------------------------
-
-export const AuthContext = createContext(null);
-
-// ----------------------------------------------------------------------
-
-AuthProvider.propTypes = {
-  children: PropTypes.node,
 };
 
 export function AuthProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initialState);
-
-  const storageAvailable = localStorageAvailable();
-
-  const initialize = useCallback(async () => {
-    try {
-      const accessToken = storageAvailable ? localStorage.getItem('accessToken') : '';
-
-      if (accessToken && isValidToken(accessToken)) {
-        setSession(accessToken);
-
-        const response = await axios.get('/api/account/my-account');
-
-        const { user } = response.data;
-
-        dispatch({
-          type: 'INITIAL',
-          payload: {
-            isAuthenticated: true,
-            user,
-          },
-        });
-      } else {
-        dispatch({
-          type: 'INITIAL',
-          payload: {
-            isAuthenticated: false,
-            user: null,
-          },
-        });
-      }
-    } catch (error) {
-      console.error(error);
-      dispatch({
-        type: 'INITIAL',
-        payload: {
-          isAuthenticated: false,
-          user: null,
-        },
-      });
-    }
-  }, [storageAvailable]);
+  const { data: session, status } = useSession();
 
   useEffect(() => {
-    initialize();
-  }, [initialize]);
-
-  // LOGIN
-  const login = useCallback(async (email, password) => {
-    const response = await axios.post('/api/account/login', {
-      email,
-      password,
-    });
-    const { accessToken, user } = response.data;
-
-    setSession(accessToken);
-
     dispatch({
-      type: 'LOGIN',
-      payload: {
-        user,
-      },
+      type: 'INITIAL',
+      isAuthenticated: status === 'authenticated',
+      user: {...session?.user, displayName: session?.user.name} || null,
+      isLoading: status === 'loading',  // Actualizar según el estado de la sesión
     });
-  }, []);
+  }, [session, status]);
 
-  // REGISTER
-  const register = useCallback(async (email, password, firstName, lastName) => {
-    const response = await axios.post('/api/account/register', {
-      email,
-      password,
-      firstName,
-      lastName,
-    });
-    const { accessToken, user } = response.data;
+  const logout = async () => {
+    dispatch({ type: 'LOGOUT' }); // Update state to reflect the user has logged out
+    await nextAuthSignOut({ redirect: false }); // Use next-auth's signOut function
+  };
 
-    localStorage.setItem('accessToken', accessToken);
-
-    dispatch({
-      type: 'REGISTER',
-      payload: {
-        user,
-      },
-    });
-  }, []);
-
-  // LOGOUT
-  const logout = useCallback(() => {
-    setSession(null);
-    dispatch({
-      type: 'LOGOUT',
-    });
-  }, []);
-
-  const memoizedValue = useMemo(
-    () => ({
-      isInitialized: state.isInitialized,
-      isAuthenticated: state.isAuthenticated,
-      user: state.user,
-      method: 'jwt',
-      login,
-      register,
-      logout,
-    }),
-    [state.isAuthenticated, state.isInitialized, state.user, login, logout, register]
+  // Provide the logout function as part of the context value
+  return (
+    <AuthContext.Provider value={{ ...state, logout }}>
+      {children}
+    </AuthContext.Provider>
   );
-
-  return <AuthContext.Provider value={memoizedValue}>{children}</AuthContext.Provider>;
 }
+
+export const useAuthContext = () => useContext(AuthContext);

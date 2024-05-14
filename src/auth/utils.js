@@ -1,75 +1,105 @@
-// routes
-import { PATH_AUTH } from '../routes/paths';
-// utils
+import { createContext, useContext, useEffect, useReducer, useCallback, useMemo } from 'react';
+import { signIn, signOut, useSession } from 'next-auth/react';
 import axios from '../utils/axios';
+import { isValidToken, setSession, tokenExpired } from './utils';
+import { PATH_AFTER_LOGIN, PATH_AUTH } from '../routes/paths';
 
-// ----------------------------------------------------------------------
+const AuthContext = createContext(null);
 
-function jwtDecode(token) {
-  const base64Url = token.split('.')[1];
-  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-  const jsonPayload = decodeURIComponent(
-    window
-      .atob(base64)
-      .split('')
-      .map((c) => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
-      .join('')
-  );
+const initialState = {
+  isInitialized: false,
+  isAuthenticated: false,
+  user: null,
+};
 
-  return JSON.parse(jsonPayload);
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'INITIAL':
+      return {
+        isInitialized: true,
+        isAuthenticated: action.payload.isAuthenticated,
+        user: action.payload.user,
+      };
+    case 'LOGIN':
+    case 'REGISTER':
+      return {
+        ...state,
+        isAuthenticated: true,
+        user: action.payload.user,
+      };
+    case 'LOGOUT':
+      return {
+        ...state,
+        isAuthenticated: false,
+        user: null,
+      };
+    default:
+      return state;
+  }
+};
+
+export function AuthProvider({ children }) {
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const { data: session, status } = useSession();
+
+  const isUser = !!session?.user;
+  useEffect(() => {
+    dispatch({
+      type: 'INITIAL',
+      payload: {
+        isAuthenticated: isUser,
+        user: session?.user ?? null,
+      },
+    });
+  }, [isUser, session]);
+
+  const login = useCallback(async (email, password) => {
+    try {
+      const result = await signIn('keycloak', { email, password, redirect: false });
+      if (result?.error) {
+        throw new Error(result.error);
+      }
+      if (result.url) {
+        window.location.href = result.url;
+      } else {
+        window.location.href = PATH_AFTER_LOGIN;
+      }
+    } catch (error) {
+      console.error('Login error:', error.message);
+      alert('Login failed: ' + error.message);
+    }
+  }, []);
+
+  const logout = useCallback(() => {
+    signOut({ redirect: false }).then(() => {
+      window.location.href = PATH_AUTH.login;
+    }).catch(error => {
+      console.error('Logout error:', error);
+      alert('Logout failed: ' + error.message);
+    });
+    dispatch({ type: 'LOGOUT' });
+  }, []);
+
+  // Verificar automáticamente el estado de la sesión cada 5 minutos
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      const token = localStorage.getItem('accessToken');
+      if (token && !isValidToken(token)) {
+        logout(); // Iniciar cierre de sesión si el token ha caducado
+      }
+    }, 300000); // 5 minutos en milisegundos
+
+    return () => clearInterval(intervalId);
+  }, [logout]);
+
+  const value = useMemo(() => ({
+    ...state,
+    method: 'keycloak',
+    login,
+    logout,
+  }), [state, login, logout]);
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-// ----------------------------------------------------------------------
-
-export const isValidToken = (accessToken) => {
-  if (!accessToken) {
-    return false;
-  }
-
-  const decoded = jwtDecode(accessToken);
-
-  const currentTime = Date.now() / 1000;
-
-  return decoded.exp > currentTime;
-};
-
-// ----------------------------------------------------------------------
-
-export const tokenExpired = (exp) => {
-  // eslint-disable-next-line prefer-const
-  let expiredTimer;
-
-  const currentTime = Date.now();
-
-  // Test token expires after 10s
-  // const timeLeft = currentTime + 10000 - currentTime; // ~10s
-  const timeLeft = exp * 1000 - currentTime;
-
-  clearTimeout(expiredTimer);
-
-  expiredTimer = setTimeout(() => {
-    alert('Token expired');
-
-    localStorage.removeItem('accessToken');
-
-    window.location.href = PATH_AUTH.login;
-  }, timeLeft);
-};
-
-// ----------------------------------------------------------------------
-
-export const setSession = (accessToken) => {
-  if (accessToken) {
-    localStorage.setItem('accessToken', accessToken);
-
-    axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
-
-    // This function below will handle when token is expired
-    const { exp } = jwtDecode(accessToken); // ~3 days by minimals server
-    tokenExpired(exp);
-  } else {
-    localStorage.removeItem('accessToken');
-
-    delete axios.defaults.headers.common.Authorization;
-  }
-};
+export const useAuthContext = () => useContext(AuthContext);
