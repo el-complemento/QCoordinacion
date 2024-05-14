@@ -46,6 +46,7 @@ export const StyledContent = styled('div')(({ theme }) => ({
   padding: theme.spacing(15, 2),
   [theme.breakpoints.up('md')]: {
     flexShrink: 0,
-    padding: theme.spacing(30, 8, 0, 8),
+    // Linea modificada, se cambio 35 por 20
+    padding: theme.spacing(20, 8, 0, 8),
   },
 }));

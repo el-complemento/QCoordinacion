@@ -1,46 +1,37 @@
 // @mui
-import { Alert, Tooltip, Stack, Typography, Link, Box } from '@mui/material';
-// auth
-import { useAuthContext } from '../../auth/useAuthContext';
+import { Button, Alert, Tooltip, Stack, Typography, Box } from '@mui/material';
+import { signIn } from 'next-auth/react'; // Importar signIn para manejar la autenticación
 // layouts
 import LoginLayout from '../../layouts/login';
-//
-import AuthLoginForm from './AuthLoginForm';
-import AuthWithSocial from './AuthWithSocial';
 
 // ----------------------------------------------------------------------
 
 export default function Login() {
-  const { method } = useAuthContext();
+    return (
+        <LoginLayout title='QCoordinaciónWeb'>
+            <Stack sx={{ mb: 5, position: 'relative' }}>
+                <Typography variant="h4">Iniciar sesión</Typography>
+                <Tooltip title={'Keycloak Auth'} placement="left">
+                    <Box
+                        component="img"
+                        alt='keycloak'
+                        src='/assets/icons/auth/ic_keycloak.png'
+                        sx={{ width: 115, height: 35, position: 'absolute', right: 0, mt: .3 }}
+                    />
+                </Tooltip>
+            </Stack>
 
-  return (
-    <LoginLayout>
-      <Stack spacing={2} sx={{ mb: 5, position: 'relative' }}>
-        <Typography variant="h4">Sign in to Minimal</Typography>
+            <Alert severity="info" sx={{ mb: 3 }}>
+                Se lo redirigirá hacia el sistema de autenticación.
+            </Alert>
 
-        <Stack direction="row" spacing={0.5}>
-          <Typography variant="body2">New user?</Typography>
-
-          <Link variant="subtitle2">Create an account</Link>
-        </Stack>
-
-        <Tooltip title={method} placement="left">
-          <Box
-            component="img"
-            alt={method}
-            src={`/assets/icons/auth/ic_${method}.png`}
-            sx={{ width: 32, height: 32, position: 'absolute', right: 0 }}
-          />
-        </Tooltip>
-      </Stack>
-
-      <Alert severity="info" sx={{ mb: 3 }}>
-        Use email : <strong>demo@minimals.cc</strong> / password :<strong> demo1234</strong>
-      </Alert>
-
-      <AuthLoginForm />
-
-      <AuthWithSocial />
-    </LoginLayout>
-  );
+            <Button
+                fullWidth
+                variant="outlined"
+                onClick={() => signIn('keycloak')} // Iniciar sesión con Keycloak
+            >
+                Iniciar sesión con Keycloak
+            </Button>
+        </LoginLayout>
+    );
 }

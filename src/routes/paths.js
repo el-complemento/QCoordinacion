@@ -5,11 +5,15 @@ function path(root, sublink) {
 }
 
 const ROOTS_DASHBOARD = '/dashboard';
+const ROOTS_AUTH = '/auth';
 
 // ----------------------------------------------------------------------
 
 export const PATH_AUTH = {
   login: '/login',
+  signOut: path(ROOTS_AUTH, '/signout'),
+  error: path(ROOTS_AUTH, '/error'),
+  verifyRequest: path(ROOTS_AUTH, '/verify-request'),
 };
 
 export const PATH_DASHBOARD = {
