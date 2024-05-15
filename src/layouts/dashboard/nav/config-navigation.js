@@ -14,6 +14,7 @@ const ICONS = {
   ecommerce: icon('ic_ecommerce'),
   analytics: icon('ic_analytics'),
   dashboard: icon('ic_dashboard'),
+  calendar: icon('ic_calendar')
 };
 
 const navConfig = [
@@ -25,6 +26,7 @@ const navConfig = [
       { title: 'One', path: PATH_DASHBOARD.one, icon: ICONS.dashboard },
       { title: 'Two', path: PATH_DASHBOARD.two, icon: ICONS.ecommerce },
       { title: 'Three', path: PATH_DASHBOARD.three, icon: ICONS.analytics },
+      { title: 'Calendario', path: PATH_DASHBOARD.calendario, icon: ICONS.calendar},
     ],
   },
 
