@@ -1,6 +1,6 @@
 // next
 import Head from 'next/head';
-import { Container, Typography } from '@mui/material';
+import { Container, Typography, Button, ButtonGroup } from '@mui/material';
 // layouts
 import DashboardLayout from '../../layouts/dashboard';
 // components
@@ -17,9 +17,7 @@ import getDay from 'date-fns/getDay';
 
 import esLocale from 'date-fns/locale/es'; // lunes primero
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-
-// Supongamos que moment es usado para la localización, puedes cambiarlo por date-fns si prefieres
-// const localizer = momentLocalizer(moment);
+import { useState } from 'react';
 
 const locales = {
   'es': esLocale
@@ -44,6 +42,7 @@ var low = "#a5d46a"
 
 export default function Calendario() {
   const { themeStretch } = useSettingsContext();
+  const [selectedQuirofano, setSelectedQuirofano] = useState('Todos');
 
   // Eventos de ejemplo, aquí podrías hacer una llamada a la API para obtenerlos
   const events = [
@@ -55,7 +54,8 @@ export default function Calendario() {
       color: high,
       doctores: ['Dr. García', 'Dra. Martínez'],
       paciente: 'Juan Pérez',
-      idOrden: 'ORD001'
+      idOrden: 'ORD001',
+      quirofano: '1'
     },
     {
       title: 'Cirugía de rodilla',
@@ -65,7 +65,9 @@ export default function Calendario() {
       color: normal,
       doctores: ['Dr. Romero'],
       paciente: 'Ana Gómez',
-      idOrden: 'ORD002'
+      idOrden: 'ORD002',
+      quirofano: '2'
+
     },
     {
       title: 'Cirugía de columna',
@@ -75,7 +77,9 @@ export default function Calendario() {
       color: low,
       doctores: ['Dra. Sánchez'],
       paciente: 'Carlos Ruiz',
-      idOrden: 'ORD003'
+      idOrden: 'ORD003',
+      quirofano: '1'
+
     },
     {
       title: 'Cirugía reconstructiva',
@@ -85,10 +89,12 @@ export default function Calendario() {
       color: high,
       doctores: ['Dr. López', 'Dr. Mora'],
       paciente: 'Luisa Navarro',
-      idOrden: 'ORD004'
+      idOrden: 'ORD004',
+      quirofano: '2'
     }
   ];
-  
+
+  const filteredEvents = selectedQuirofano === 'Todos' ? events : events.filter(event => event.quirofano === selectedQuirofano);
 
   const eventStyleGetter = (event) => {
     return {
@@ -105,20 +111,25 @@ export default function Calendario() {
     alert(`Evento: ${event.title}\nInicio: ${event.start}\nFin: ${event.end}\nPaciente: ${event.paciente}\nDoctores: ${event.doctores.join(', ')}\nID Orden: ${event.idOrden}`);
     // Aquí podrías abrir un modal o redireccionar a una página con detalles
   }
-  
+
   return (
     <>
       <Head>
         <title>Calendario | QCoordinación Web</title>
       </Head>
-  
+
       <Container maxWidth={themeStretch ? false : 'xl'}>
         <Typography variant="h3" component="h1" paragraph>
           Calendario
         </Typography>
+        <ButtonGroup variant="contained" aria-label="outlined primary button group" style={{ marginBottom: '20px' }}>
+          <Button onClick={() => setSelectedQuirofano('Todos')}>Todos</Button>
+          <Button onClick={() => setSelectedQuirofano('1')}>Quirófano 1</Button>
+          <Button onClick={() => setSelectedQuirofano('2')}>Quirófano 2</Button>
+        </ButtonGroup>
         <Calendar
           localizer={localizer}
-          events={events}
+          events={filteredEvents}
           startAccessor="start"
           endAccessor="end"
           culture="es"
