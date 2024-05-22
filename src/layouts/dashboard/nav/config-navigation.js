@@ -3,6 +3,8 @@ import { PATH_DASHBOARD } from '../../../routes/paths';
 // components
 import SvgColor from '../../../components/svg-color';
 
+//Iconos
+
 // ----------------------------------------------------------------------
 
 const icon = (name) => (
@@ -11,9 +13,9 @@ const icon = (name) => (
 
 const ICONS = {
   user: icon('ic_user'),
-  ecommerce: icon('ic_ecommerce'),
-  analytics: icon('ic_analytics'),
-  dashboard: icon('ic_dashboard'),
+  Album: icon('ic_album'),
+  ClipboardList: icon('ic_clipboard-list'),
+  Activity: icon('ic_activity'),
   calendar: icon('ic_calendar')
 };
 
@@ -21,11 +23,11 @@ const navConfig = [
   // GENERAL
   // ----------------------------------------------------------------------
   {
-    subheader: 'general v4.2.0',
+    subheader: 'Menú',
     items: [
-      { title: 'One', path: PATH_DASHBOARD.one, icon: ICONS.dashboard },
-      { title: 'Two', path: PATH_DASHBOARD.two, icon: ICONS.ecommerce },
-      { title: 'Three', path: PATH_DASHBOARD.three, icon: ICONS.analytics },
+      { title: 'Ordenes', path: PATH_DASHBOARD.one, icon: ICONS.Album },
+      { title: 'Preoperatorios', path: PATH_DASHBOARD.two, icon: ICONS.ClipboardList },
+      { title: 'Coordinar', path: PATH_DASHBOARD.three, icon: ICONS.Activity },
       { title: 'Calendario', path: PATH_DASHBOARD.calendario, icon: ICONS.calendar},
     ],
   },
