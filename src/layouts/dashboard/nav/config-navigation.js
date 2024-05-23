@@ -3,8 +3,6 @@ import { PATH_DASHBOARD } from '../../../routes/paths';
 // components
 import SvgColor from '../../../components/svg-color';
 
-//Iconos
-
 // ----------------------------------------------------------------------
 
 const icon = (name) => (
@@ -25,8 +23,7 @@ const navConfig = [
   {
     subheader: 'Menú',
     items: [
-      { title: 'Ordenes', path: PATH_DASHBOARD.one, icon: ICONS.Album },
-      { title: 'Preoperatorios', path: PATH_DASHBOARD.two, icon: ICONS.ClipboardList },
+      { title: 'Ordenes', path: PATH_DASHBOARD.one, icon: ICONS.ClipboardList },
       { title: 'Coordinar', path: PATH_DASHBOARD.three, icon: ICONS.Activity },
       { title: 'Calendario', path: PATH_DASHBOARD.calendario, icon: ICONS.calendar},
     ],
@@ -35,10 +32,10 @@ const navConfig = [
   // MANAGEMENT
   // ----------------------------------------------------------------------
   {
-    subheader: 'management',
+    subheader: 'Administración',
     items: [
       {
-        title: 'user',
+        title: 'Usuario',
         path: PATH_DASHBOARD.user.root,
         icon: ICONS.user,
         children: [
