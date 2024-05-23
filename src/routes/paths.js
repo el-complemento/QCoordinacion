@@ -20,6 +20,7 @@ export const PATH_DASHBOARD = {
   root: ROOTS_DASHBOARD,
   one: path(ROOTS_DASHBOARD, '/one'),
   two: path(ROOTS_DASHBOARD, '/two'),
+  calendario: path(ROOTS_DASHBOARD, '/calendario'),
   three: path(ROOTS_DASHBOARD, '/three'),
   user: {
     root: path(ROOTS_DASHBOARD, '/user'),
