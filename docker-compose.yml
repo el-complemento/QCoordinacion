@@ -10,3 +10,10 @@ services:
       - /var/www/html/node_modules
     ports:
       - 3000:3000
+    networks:
+      - qc-network
+
+networks:
+  qc-network:
+    external: true
+    

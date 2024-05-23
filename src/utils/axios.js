@@ -1,10 +1,9 @@
 import axios from 'axios';
 // config
-import { HOST_API_KEY } from '../config-global';
+import { API_GATEWAY_URL } from '../config-global';
 
 // ----------------------------------------------------------------------
-
-const axiosInstance = axios.create({ baseURL: HOST_API_KEY });
+const axiosInstance = axios.create({ baseURL: `${API_GATEWAY_URL}/` });
 
 axiosInstance.interceptors.response.use(
   (response) => response,

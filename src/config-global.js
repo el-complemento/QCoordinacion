@@ -4,15 +4,13 @@ import { PATH_DASHBOARD } from './routes/paths';
 // API
 // ----------------------------------------------------------------------
 
-export const HOST_API_KEY = process.env.HOST_API_KEY || '';
+export const API_GATEWAY_URL = process.env.API_GATEWAY_URL || 'http://localhost:8081';
 
-
-export const AUTH0_GOOGLE = {
-  clientId: process.env.GOOGLE_CLIENT_ID,
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+export const AUTH_KEYCLOAK = {
+  clientId: process.env.KEYCLOAK_CLIENT_ID,
+  clientSecret: process.env.KEYCLOAK_CLIENT_SECRET,
+  issuer: `${process.env.KEYCLOAK_DOMAIN}/realms/${process.env.KEYCLOAK_REALM}`
 };
-
-export const MAP_API = process.env.MAPBOX_API;
 
 // ROOT PATH AFTER LOGIN SUCCESSFUL
 export const PATH_AFTER_LOGIN = PATH_DASHBOARD.one;

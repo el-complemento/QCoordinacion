@@ -1,5 +1,6 @@
 // next
 import Head from 'next/head';
+import { useState, useEffect } from 'react';
 import { Container, Typography, Button, ButtonGroup } from '@mui/material';
 // layouts
 import DashboardLayout from '../../layouts/dashboard';
@@ -17,7 +18,8 @@ import getDay from 'date-fns/getDay';
 
 import esLocale from 'date-fns/locale/es'; // lunes primero
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { useState } from 'react';
+
+import { getCirujiasService } from '@/services/fhirService';
 
 const locales = {
   'es': esLocale
@@ -40,9 +42,13 @@ var high = "#ffa080"
 var normal = "#ffff80"
 var low = "#a5d46a"
 
-export default function Calendario() {
+export default function Calendario({ initialData }) {
   const { themeStretch } = useSettingsContext();
   const [selectedQuirofano, setSelectedQuirofano] = useState('Todos');
+
+  useEffect(() => {
+    console.log(initialData);
+  }, [initialData])
 
   // Eventos de ejemplo, aquí podrías hacer una llamada a la API para obtenerlos
   const events = [
@@ -142,3 +148,12 @@ export default function Calendario() {
     </>
   );
 }
+
+export const getServerSideProps = async () => {
+  try {
+      const data = await getCirujiasService();
+      return { props: { data } };
+  } catch (error) {
+      return { props: { data: null, error: error.message } };
+  }
+};

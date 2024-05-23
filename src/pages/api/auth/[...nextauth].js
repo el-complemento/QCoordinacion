@@ -1,14 +1,12 @@
 import NextAuth from 'next-auth';
 import KeycloakProvider from 'next-auth/providers/keycloak';
+import { AUTH_KEYCLOAK } from '@/config-global';
 
 export default NextAuth({
   providers: [
-    KeycloakProvider({
-      clientId: process.env.KEYCLOAK_CLIENT_ID,
-      clientSecret: process.env.KEYCLOAK_CLIENT_SECRET,
-      issuer: `${process.env.KEYCLOAK_DOMAIN}/realms/${process.env.KEYCLOAK_REALM}`
-    })
+    KeycloakProvider(AUTH_KEYCLOAK)
   ],
+  debug: true,
   callbacks: {
     async jwt({ token, account }) {
       if (account) {
