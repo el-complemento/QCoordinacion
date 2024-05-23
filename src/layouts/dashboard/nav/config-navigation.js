@@ -25,7 +25,9 @@ const navConfig = [
     items: [
       { title: 'Ordenes', path: PATH_DASHBOARD.one, icon: ICONS.ClipboardList },
       { title: 'Coordinar', path: PATH_DASHBOARD.three, icon: ICONS.Activity },
-      { title: 'Calendario', path: PATH_DASHBOARD.calendario, icon: ICONS.calendar},
+      { title: 'Crear procedimiento', path: PATH_DASHBOARD.one, icon: ICONS.ClipboardList },
+      { title: 'Two', path: PATH_DASHBOARD.two, icon: ICONS.ecommerce },
+      { title: 'Calendario', path: PATH_DASHBOARD.calendario, icon: ICONS.calendar}
     ],
   },
 
