@@ -14,7 +14,8 @@ const ICONS = {
   ecommerce: icon('ic_ecommerce'),
   analytics: icon('ic_analytics'),
   dashboard: icon('ic_dashboard'),
-  calendar: icon('ic_calendar')
+  calendar: icon('ic_calendar'),
+  carrito: icon('ic_cart'),
 };
 
 const navConfig = [
@@ -25,7 +26,7 @@ const navConfig = [
     items: [
       { title: 'One', path: PATH_DASHBOARD.one, icon: ICONS.dashboard },
       { title: 'Two', path: PATH_DASHBOARD.two, icon: ICONS.ecommerce },
-      { title: 'Three', path: PATH_DASHBOARD.three, icon: ICONS.analytics },
+      { title: 'recomendaciones', path: PATH_DASHBOARD.recomendaciones, icon: ICONS.carrito},
       { title: 'Calendario', path: PATH_DASHBOARD.calendario, icon: ICONS.calendar},
     ],
   },
@@ -50,3 +51,4 @@ const navConfig = [
 ];
 
 export default navConfig;
+

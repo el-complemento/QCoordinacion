@@ -21,7 +21,7 @@ export const PATH_DASHBOARD = {
   one: path(ROOTS_DASHBOARD, '/one'),
   two: path(ROOTS_DASHBOARD, '/two'),
   calendario: path(ROOTS_DASHBOARD, '/calendario'),
-  three: path(ROOTS_DASHBOARD, '/three'),
+  recomendaciones: path(ROOTS_DASHBOARD, '/recomendaciones'),
   user: {
     root: path(ROOTS_DASHBOARD, '/user'),
     four: path(ROOTS_DASHBOARD, '/user/four'),
