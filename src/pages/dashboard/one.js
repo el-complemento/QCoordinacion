@@ -1,21 +1,39 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
-import { Container, Typography, Button, Checkbox, FormControl, InputLabel, Select, MenuItem, FormGroup, FormControlLabel } from '@mui/material';
+import { Container, Typography, Button, Checkbox, FormControl, InputLabel, Select, MenuItem, FormGroup, FormControlLabel, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Autocomplete } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DashboardLayout from '../../layouts/dashboard';
 import { useSettingsContext } from '../../components/settings';
 
 function MedicalProcedureForm() {
   const [procedure, setProcedure] = useState('');
+  const [procedureName, setProcedureName] = useState(''); 
   const [doctorId, setDoctorId] = useState('');
   const [patientId, setPatientId] = useState('');
   const [priority, setPriority] = useState('');
+  const [estimatedHours, setEstimatedHours] = useState(''); 
   const [roles, setRoles] = useState([{ id: '', role: '' }]);
   const [preOps, setPreOps] = useState({
-    anesthesia: false,
-    surgeon: false,
-    others: false
+    anesthesia: true,
+    surgeon: true,
+    others: ''
   });
+  const [openSummary, setOpenSummary] = useState(false);
+
+  const doctorOptions = [
+    { label: '12345678 - Leo Messi', id: 1 },
+    { label: '87654321 - Lucho Suarez', id: 2 }
+  ];
+
+  const patientOptions = [
+    { label: '12345679 - Diego Forlan', id: 1 },
+    { label: '98765432 - Edi Cavani', id: 2 }
+  ];
+
+  const procedures = [
+    { value: 10, label: 'Procedimiento 1' },
+    { value: 20, label: 'Procedimiento 2' }
+  ];
 
   const handleRoleChange = (index, event) => {
     const newRoles = roles.map((role, idx) => {
@@ -37,52 +55,61 @@ function MedicalProcedureForm() {
       alert('Por favor, completa todos los campos requeridos.');
       return;
     }
-    console.log({ procedure, doctorId, patientId, priority, roles, preOps });
-    // aca se mandan datos a donde sea necesario
+    setOpenSummary(true);
+  };
+
+  const handleConfirm = () => {
+    console.log({ procedure, procedureName, doctorId, patientId, priority, estimatedHours, roles, preOps });
+    // acá se mandan datos a donde sea necesario
+    setOpenSummary(false);
+  };
+
+  const handleModify = () => {
+    setOpenSummary(false);
+  };
+
+  const handleProcedureChange = (event) => {
+    const value = event.target.value;
+    const selectedProcedure = procedures.find(p => p.value === value);
+    const name = selectedProcedure ? selectedProcedure.label : '';
+    setProcedure(value);
+    setProcedureName(name);
   };
 
   return (
-    <Container maxWidth="xl">
-      <Typography variant="h3" component="h1" paragraph>
-        Registrar Procedimiento Médico
+    <>
+      <Typography variant="h4" align="center" gutterBottom>
+        Crear procedimiento médico
       </Typography>
-
       <form onSubmit={handleSubmit} style={{ marginTop: '20px' }}>
         <FormControl fullWidth margin="normal">
           <InputLabel>Procedimiento</InputLabel>
           <Select
             value={procedure}
-            onChange={e => setProcedure(e.target.value)}
+            onChange={handleProcedureChange}
             label="Procedimiento"
           >
-            <MenuItem value={10}>Procedimiento 1</MenuItem>
-            <MenuItem value={20}>Procedimiento 2</MenuItem>
+            {procedures.map((proc) => (
+              <MenuItem key={proc.value} value={proc.value}>{proc.label}</MenuItem>
+            ))}
           </Select>
         </FormControl>
 
-        <FormControl fullWidth margin="normal">
-          <InputLabel>Cédula del Doctor</InputLabel>
-          <Select
-            value={doctorId}
-            onChange={e => setDoctorId(e.target.value)}
-            label="Cédula del Doctor"
-          >
-            <MenuItem value={1}>12345678</MenuItem>
-            <MenuItem value={2}>87654321</MenuItem>
-          </Select>
-        </FormControl>
+        <Autocomplete
+          options={doctorOptions}
+          getOptionLabel={(option) => option.label}
+          renderInput={(params) => <TextField {...params} label="Doctor" margin="normal" />}
+          onChange={(event, newValue) => setDoctorId(newValue ? newValue.label : '')}
+          fullWidth
+        />
 
-        <FormControl fullWidth margin="normal">
-          <InputLabel>Cédula del Paciente</InputLabel>
-          <Select
-            value={patientId}
-            onChange={e => setPatientId(e.target.value)}
-            label="Cédula del Paciente"
-          >
-            <MenuItem value={1}>12345679</MenuItem>
-            <MenuItem value={2}>98765432</MenuItem>
-          </Select>
-        </FormControl>
+        <Autocomplete
+          options={patientOptions}
+          getOptionLabel={(option) => option.label}
+          renderInput={(params) => <TextField {...params} label="Paciente" margin="normal" />}
+          onChange={(event, newValue) => setPatientId(newValue ? newValue.label : '')}
+          fullWidth
+        />
 
         <FormControl fullWidth margin="normal">
           <InputLabel>Prioridad</InputLabel>
@@ -96,6 +123,15 @@ function MedicalProcedureForm() {
             <MenuItem value="Baja">Baja</MenuItem>
           </Select>
         </FormControl>
+
+        <TextField
+          label="Horas estimadas"
+          variant="outlined"
+          fullWidth
+          margin="normal"
+          value={estimatedHours}
+          onChange={(e) => setEstimatedHours(e.target.value)}
+        />
 
         <Typography variant="h6" style={{ marginTop: '30px', marginBottom: '10px' }}>Roles necesarios</Typography>
         {roles.map((role, index) => (
@@ -118,33 +154,65 @@ function MedicalProcedureForm() {
 
         <Typography variant="h6" style={{ marginTop: '30px', marginBottom: '10px' }}>Preoperatorios necesarios</Typography>
         <FormGroup>
-          <FormControlLabel control={<Checkbox checked={preOps.anesthesia} onChange={e => setPreOps({...preOps, anesthesia: e.target.checked})} />} label="Anestesia" />
-          <FormControlLabel control={<Checkbox checked={preOps.surgeon} onChange={e => setPreOps({...preOps, surgeon: e.target.checked})} />} label="Cirujano" />
-          <FormControlLabel control={<Checkbox checked={preOps.others} onChange={e => setPreOps({...preOps, others: e.target.checked})} />} label="Otros" />
+          {/* surgeon = cardiologo, cambiar eso */}          
+          <FormControlLabel control={<Checkbox checked={preOps.anesthesia} disabled />} label="Anestesia" />
+          <FormControlLabel control={<Checkbox checked={preOps.surgeon} disabled />} label="Cardiologo" />
+          <TextField
+            label="Otros preoperatorios"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            value={preOps.others}
+            onChange={e => setPreOps({...preOps, others: e.target.value})}
+          />
         </FormGroup>
 
         <Button type="submit" variant="contained" style={{ display: 'block', marginTop: '20px', marginLeft: 'auto', marginRight: 'auto' }}>
           Crear procedimiento
         </Button>
       </form>
-    </Container>
-  );
-}
 
-PageOne.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
-
-export default function PageOne() {
-  const { themeStretch } = useSettingsContext();
-
-  return (
-    <>
-      <Head>
-        <title>Crear Orden | Dashboard</title>
-      </Head>
-
-      <Container maxWidth={themeStretch ? false : 'xl'}>
-        <MedicalProcedureForm />
-      </Container>
+      <Dialog open={openSummary} onClose={handleModify}>
+        <DialogTitle>Resumen del Procedimiento</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            <Typography variant="h6">Procedimiento</Typography>
+            <Typography>{procedureName}</Typography> {/* Mostrar nombre del procedimiento */}
+            <Typography variant="h6">Cédula del Doctor</Typography>
+            <Typography>{doctorId}</Typography>
+            <Typography variant="h6">Cédula del Paciente</Typography>
+            <Typography>{patientId}</Typography>
+            <Typography variant="h6">Prioridad</Typography>
+            <Typography>{priority}</Typography>
+            <Typography variant="h6">Horas Estimadas</Typography>
+            <Typography>{estimatedHours}</Typography>
+            <Typography variant="h6">Roles necesarios</Typography>
+            {roles.map((role, index) => (
+              <Typography key={index}>{`Rol ${index + 1}: ${role.role}`}</Typography>
+            ))}
+            <Typography variant="h6">Preoperatorios necesarios</Typography>
+            <Typography>Anestesia: {preOps.anesthesia ? 'Sí' : 'No'}</Typography>
+            <Typography>Cirujano: {preOps.surgeon ? 'Sí' : 'No'}</Typography>
+            <Typography>Otros preoperatorios: {preOps.others}</Typography>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleModify} color="primary">
+            Modificar
+          </Button>
+          <Button onClick={handleConfirm} color="primary">
+            Confirmar
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }
+
+MedicalProcedureForm.getLayout = (page) => (
+  <DashboardLayout>
+    {page}
+  </DashboardLayout>
+);
+
+export default MedicalProcedureForm;
