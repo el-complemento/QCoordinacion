@@ -7,15 +7,14 @@ import { useSettingsContext } from '../../components/settings';
 
 function MedicalProcedureForm() {
   const [procedure, setProcedure] = useState('');
-  const [procedureName, setProcedureName] = useState(''); 
+  const [procedureName, setProcedureName] = useState('');
   const [doctorId, setDoctorId] = useState('');
   const [patientId, setPatientId] = useState('');
   const [priority, setPriority] = useState('');
-  const [estimatedHours, setEstimatedHours] = useState(''); 
   const [roles, setRoles] = useState([{ id: '', role: '' }]);
   const [preOps, setPreOps] = useState({
-    anesthesia: true,
-    surgeon: true,
+    anesthesia: true,  // preseleccionado
+    surgeon: true,  // preseleccionado
     others: ''
   });
   const [openSummary, setOpenSummary] = useState(false);
@@ -59,8 +58,7 @@ function MedicalProcedureForm() {
   };
 
   const handleConfirm = () => {
-    console.log({ procedure, procedureName, doctorId, patientId, priority, estimatedHours, roles, preOps });
-    // acá se mandan datos a donde sea necesario
+    console.log({ procedure, procedureName, doctorId, patientId, priority, roles, preOps });
     setOpenSummary(false);
   };
 
@@ -124,15 +122,6 @@ function MedicalProcedureForm() {
           </Select>
         </FormControl>
 
-        <TextField
-          label="Horas estimadas"
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          value={estimatedHours}
-          onChange={(e) => setEstimatedHours(e.target.value)}
-        />
-
         <Typography variant="h6" style={{ marginTop: '30px', marginBottom: '10px' }}>Roles necesarios</Typography>
         {roles.map((role, index) => (
           <FormControl key={index} fullWidth margin="normal">
@@ -154,9 +143,16 @@ function MedicalProcedureForm() {
 
         <Typography variant="h6" style={{ marginTop: '30px', marginBottom: '10px' }}>Preoperatorios necesarios</Typography>
         <FormGroup>
-          {/* surgeon = cardiologo, cambiar eso */}          
-          <FormControlLabel control={<Checkbox checked={preOps.anesthesia} disabled />} label="Anestesia" />
-          <FormControlLabel control={<Checkbox checked={preOps.surgeon} disabled />} label="Cardiologo" />
+          <FormControlLabel
+            control={<Checkbox checked={preOps.anesthesia} />}
+            label="Anestesia"
+            disabled
+          />
+          <FormControlLabel
+            control={<Checkbox checked={preOps.surgeon} />}
+            label="Cardiologo"
+            disabled
+          />
           <TextField
             label="Otros preoperatorios"
             variant="outlined"
@@ -177,15 +173,13 @@ function MedicalProcedureForm() {
         <DialogContent>
           <DialogContentText>
             <Typography variant="h6">Procedimiento</Typography>
-            <Typography>{procedureName}</Typography> {/* Mostrar nombre del procedimiento */}
+            <Typography>{procedureName}</Typography>
             <Typography variant="h6">Cédula del Doctor</Typography>
             <Typography>{doctorId}</Typography>
             <Typography variant="h6">Cédula del Paciente</Typography>
             <Typography>{patientId}</Typography>
             <Typography variant="h6">Prioridad</Typography>
             <Typography>{priority}</Typography>
-            <Typography variant="h6">Horas Estimadas</Typography>
-            <Typography>{estimatedHours}</Typography>
             <Typography variant="h6">Roles necesarios</Typography>
             {roles.map((role, index) => (
               <Typography key={index}>{`Rol ${index + 1}: ${role.role}`}</Typography>
@@ -197,22 +191,28 @@ function MedicalProcedureForm() {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleModify} color="primary">
-            Modificar
-          </Button>
-          <Button onClick={handleConfirm} color="primary">
-            Confirmar
-          </Button>
+          <Button onClick={handleModify} color="primary">Modificar</Button>
+          <Button onClick={handleConfirm} color="primary">Confirmar</Button>
         </DialogActions>
       </Dialog>
     </>
   );
 }
 
-MedicalProcedureForm.getLayout = (page) => (
-  <DashboardLayout>
-    {page}
-  </DashboardLayout>
-);
+PageOne.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 
-export default MedicalProcedureForm;
+export default function PageOne() {
+  const { themeStretch } = useSettingsContext();
+
+  return (
+    <>
+      <Head>
+        <title>Crear Orden | Dashboard</title>
+      </Head>
+
+      <Container maxWidth={themeStretch ? false : 'xl'}>
+        <MedicalProcedureForm />
+      </Container>
+    </>
+  );
+}
