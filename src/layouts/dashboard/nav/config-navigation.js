@@ -11,33 +11,36 @@ const icon = (name) => (
 
 const ICONS = {
   user: icon('ic_user'),
-  ecommerce: icon('ic_ecommerce'),
-  analytics: icon('ic_analytics'),
-  dashboard: icon('ic_dashboard'),
-  calendar: icon('ic_calendar'),
   carrito: icon('ic_cart'),
+  Album: icon('ic_album'),
+  ClipboardList: icon('ic_clipboard-list'),
+  Activity: icon('ic_activity'),
+  calendar: icon('ic_calendar')
 };
 
 const navConfig = [
   // GENERAL
   // ----------------------------------------------------------------------
   {
-    subheader: 'general v4.2.0',
+    subheader: 'Menú',
     items: [
-      { title: 'One', path: PATH_DASHBOARD.one, icon: ICONS.dashboard },
+      { title: 'Ordenes', path: PATH_DASHBOARD.one, icon: ICONS.ClipboardList },
+      { title: 'Coordinar', path: PATH_DASHBOARD.three, icon: ICONS.Activity },
+      { title: 'Crear procedimiento', path: PATH_DASHBOARD.one, icon: ICONS.ClipboardList },
       { title: 'Two', path: PATH_DASHBOARD.two, icon: ICONS.ecommerce },
       { title: 'recomendaciones', path: PATH_DASHBOARD.recomendaciones, icon: ICONS.carrito},
       { title: 'Calendario', path: PATH_DASHBOARD.calendario, icon: ICONS.calendar},
+
     ],
   },
 
   // MANAGEMENT
   // ----------------------------------------------------------------------
   {
-    subheader: 'management',
+    subheader: 'Administración',
     items: [
       {
-        title: 'user',
+        title: 'Usuario',
         path: PATH_DASHBOARD.user.root,
         icon: ICONS.user,
         children: [
