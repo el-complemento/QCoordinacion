@@ -13,6 +13,14 @@ export default function Recomendaciones() {
     window.location.reload();
   };
 
+  const data = [
+    { id: 1, codigo: '1234', paciente: '64872230', fecha: '22/5/2024', medicos: 'Medico 1' },
+    { id: 2, codigo: '5678', paciente: '64872231', fecha: '23/5/2024', medicos: 'Medico 2' },
+    { id: 3, codigo: '9101', paciente: '64872232', fecha: '24/5/2024', medicos: 'Medico 3' },
+    { id: 4, codigo: '1121', paciente: '64872233', fecha: '25/5/2024', medicos: 'Medico 4' },
+    { id: 5, codigo: '3141', paciente: '64872234', fecha: '26/5/2024', medicos: 'Medico 5' },
+  ];
+
   return (
     <>
       <Head>
@@ -43,195 +51,21 @@ export default function Recomendaciones() {
               </TableRow>
             </TableHead>
             <TableBody>
-              
-              <TableRow>
-                <TableCell>1</TableCell>
-                <TableCell>1234</TableCell>
-                <TableCell>64872230</TableCell>
-                <TableCell>22/5/2024</TableCell>
-                <TableCell>Medico 1</TableCell>
-                <TableCell>
-                  <Box display="flex" gap={1}>
-                    <Button variant="contained">Confirmar</Button>
-                    <Button variant="outlined">Editar</Button>
-                  </Box>
-                </TableCell>
-              </TableRow>
-
-              <TableRow>
-                <TableCell>1</TableCell>
-                <TableCell>1234</TableCell>
-                <TableCell>64872230</TableCell>
-                <TableCell>22/5/2024</TableCell>
-                <TableCell>Medico 1</TableCell>
-                <TableCell>
-                  <Box display="flex" gap={1}>
-                    <Button variant="contained">Confirmar</Button>
-                    <Button variant="outlined">Editar</Button>
-                  </Box>
-                </TableCell>
-              </TableRow>
-              {/* ---------------------------de aca pabajo se repiten--------------------------------- */}
-              <TableRow>
-                <TableCell>1</TableCell>
-                <TableCell>1234</TableCell>
-                <TableCell>64872230</TableCell>
-                <TableCell>22/5/2024</TableCell>
-                <TableCell>Medico 1</TableCell>
-                <TableCell>
-                  <Box display="flex" gap={1}>
-                    <Button variant="contained">Confirmar</Button>
-                    <Button variant="outlined">Editar</Button>
-                  </Box>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>1</TableCell>
-                <TableCell>1234</TableCell>
-                <TableCell>64872230</TableCell>
-                <TableCell>22/5/2024</TableCell>
-                <TableCell>Medico 1</TableCell>
-                <TableCell>
-                  <Box display="flex" gap={1}>
-                    <Button variant="contained">Confirmar</Button>
-                    <Button variant="outlined">Editar</Button>
-                  </Box>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>1</TableCell>
-                <TableCell>1234</TableCell>
-                <TableCell>64872230</TableCell>
-                <TableCell>22/5/2024</TableCell>
-                <TableCell>Medico 1</TableCell>
-                <TableCell>
-                  <Box display="flex" gap={1}>
-                    <Button variant="contained">Confirmar</Button>
-                    <Button variant="outlined">Editar</Button>
-                  </Box>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>1</TableCell>
-                <TableCell>1234</TableCell>
-                <TableCell>64872230</TableCell>
-                <TableCell>22/5/2024</TableCell>
-                <TableCell>Medico 1</TableCell>
-                <TableCell>
-                  <Box display="flex" gap={1}>
-                    <Button variant="contained">Confirmar</Button>
-                    <Button variant="outlined">Editar</Button>
-                  </Box>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>1</TableCell>
-                <TableCell>1234</TableCell>
-                <TableCell>64872230</TableCell>
-                <TableCell>22/5/2024</TableCell>
-                <TableCell>Medico 1</TableCell>
-                <TableCell>
-                  <Box display="flex" gap={1}>
-                    <Button variant="contained">Confirmar</Button>
-                    <Button variant="outlined">Editar</Button>
-                  </Box>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>1</TableCell>
-                <TableCell>1234</TableCell>
-                <TableCell>64872230</TableCell>
-                <TableCell>22/5/2024</TableCell>
-                <TableCell>Medico 1</TableCell>
-                <TableCell>
-                  <Box display="flex" gap={1}>
-                    <Button variant="contained">Confirmar</Button>
-                    <Button variant="outlined">Editar</Button>
-                  </Box>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>1</TableCell>
-                <TableCell>1234</TableCell>
-                <TableCell>64872230</TableCell>
-                <TableCell>22/5/2024</TableCell>
-                <TableCell>Medico 1</TableCell>
-                <TableCell>
-                  <Box display="flex" gap={1}>
-                    <Button variant="contained">Confirmar</Button>
-                    <Button variant="outlined">Editar</Button>
-                  </Box>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>1</TableCell>
-                <TableCell>1234</TableCell>
-                <TableCell>64872230</TableCell>
-                <TableCell>22/5/2024</TableCell>
-                <TableCell>Medico 1</TableCell>
-                <TableCell>
-                  <Box display="flex" gap={1}>
-                    <Button variant="contained">Confirmar</Button>
-                    <Button variant="outlined">Editar</Button>
-                  </Box>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>1</TableCell>
-                <TableCell>1234</TableCell>
-                <TableCell>64872230</TableCell>
-                <TableCell>22/5/2024</TableCell>
-                <TableCell>Medico 1</TableCell>
-                <TableCell>
-                  <Box display="flex" gap={1}>
-                    <Button variant="contained">Confirmar</Button>
-                    <Button variant="outlined">Editar</Button>
-                  </Box>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>1</TableCell>
-                <TableCell>1234</TableCell>
-                <TableCell>64872230</TableCell>
-                <TableCell>22/5/2024</TableCell>
-                <TableCell>Medico 1</TableCell>
-                <TableCell>
-                  <Box display="flex" gap={1}>
-                    <Button variant="contained">Confirmar</Button>
-                    <Button variant="outlined">Editar</Button>
-                  </Box>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>1</TableCell>
-                <TableCell>1234</TableCell>
-                <TableCell>64872230</TableCell>
-                <TableCell>22/5/2024</TableCell>
-                <TableCell>Medico 1</TableCell>
-                <TableCell>
-                  <Box display="flex" gap={1}>
-                    <Button variant="contained">Confirmar</Button>
-                    <Button variant="outlined">Editar</Button>
-                  </Box>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>1</TableCell>
-                <TableCell>1234</TableCell>
-                <TableCell>64872230</TableCell>
-                <TableCell>22/5/2024</TableCell>
-                <TableCell>Medico 1</TableCell>
-                <TableCell>
-                  <Box display="flex" gap={1}>
-                    <Button variant="contained">Confirmar</Button>
-                    <Button variant="outlined">Editar</Button>
-                  </Box>
-                </TableCell>
-              </TableRow>
-              
-              {/* -----------------------aca terminan obviamente------------------------------------- */}
-
-
+              {data.map((item) => (
+                <TableRow key={item.id}>
+                  <TableCell>{item.id}</TableCell>
+                  <TableCell>{item.codigo}</TableCell>
+                  <TableCell>{item.paciente}</TableCell>
+                  <TableCell>{item.fecha}</TableCell>
+                  <TableCell>{item.medicos}</TableCell>
+                  <TableCell>
+                    <Box display="flex" gap={1}>
+                      <Button variant="contained">Confirmar</Button>
+                      <Button variant="outlined">Editar</Button>
+                    </Box>
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </TableContainer>
