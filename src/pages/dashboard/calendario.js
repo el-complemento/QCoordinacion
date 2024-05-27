@@ -2,24 +2,26 @@
 import Head from 'next/head';
 import { useState, useEffect } from 'react';
 import { Container, Typography, Button, ButtonGroup } from '@mui/material';
-// layouts
-import DashboardLayout from '../../layouts/dashboard';
-// components
-import { useSettingsContext } from '../../components/settings';
-
-// import { Calendar, momentLocalizer } from 'react-big-calendar';
-// import moment from 'moment';
+import esLocale from 'date-fns/locale/es'; // lunes primero
 
 import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
 import format from 'date-fns/format';
 import parse from 'date-fns/parse';
 import startOfWeek from 'date-fns/startOfWeek';
 import getDay from 'date-fns/getDay';
-
-import esLocale from 'date-fns/locale/es'; // lunes primero
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
+// layouts
+import DashboardLayout from '../../layouts/dashboard';
+
+// components
+import { useSettingsContext } from '../../components/settings';
+
+// Services
 import { getCirujiasService } from '@/services/fhirService';
+
+//utils
+import { parseCustomFhirDate } from '@/utils/parseCustomFhirDate';
 
 const locales = {
   'es': esLocale
@@ -38,20 +40,44 @@ const localizer = dateFnsLocalizer({
 Calendario.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 
 // ----------------------------------------------------------------------
-var high = "#ffa080"
-var normal = "#ffff80"
-var low = "#a5d46a"
 
-export default function Calendario({ initialData }) {
+export const getServerSideProps = async () => {
+  try {
+    const data = await getCirujiasService();
+
+    console.log("## CIRUJIAS", data);
+
+    return { props: { cirujias: data } };
+  } catch (error) {
+    return { props: { data: null, error: error.message } };
+  }
+};
+
+// ----------------------------------------------------------------------
+
+
+var COLORS = {
+  high: "#ffa080",
+  normal: "#ffff80",
+  low: "#a5d46a"
+}
+
+export default function Calendario({ cirujias = [], error = "" }) {
   const { themeStretch } = useSettingsContext();
   const [selectedQuirofano, setSelectedQuirofano] = useState('Todos');
 
-  useEffect(() => {
-    console.log(initialData);
-  }, [initialData])
+  const getCirujias = () => {
+    const cirujiasFormateadas = cirujias.map(cirujia => ({
+      ...cirujia,
+      start: parseCustomFhirDate(cirujia.start),
+      end: parseCustomFhirDate(cirujia.end)
+    }))
+    console.log(cirujiasFormateadas);
+    return cirujiasFormateadas
+  }
 
   // Eventos de ejemplo, aquí podrías hacer una llamada a la API para obtenerlos
-  const events = [
+  /* const events = [
     {
       title: 'Cirugía de cadera',
       start: new Date(2024, 4, 15, 8, 0),
@@ -98,14 +124,14 @@ export default function Calendario({ initialData }) {
       idOrden: 'ORD004',
       quirofano: '2'
     }
-  ];
+  ]; */
 
-  const filteredEvents = selectedQuirofano === 'Todos' ? events : events.filter(event => event.quirofano === selectedQuirofano);
+  const filteredEvents = selectedQuirofano === 'Todos' ? getCirujias() : getCirujias().filter(cirujia => cirujia.quirofano === selectedQuirofano);
 
   const eventStyleGetter = (event) => {
     return {
       style: {
-        backgroundColor: event.color,
+        backgroundColor: COLORS[event.color],
         color: 'black', //color del texto 
         borderRadius: '0px',
         border: 'none'
@@ -148,12 +174,3 @@ export default function Calendario({ initialData }) {
     </>
   );
 }
-
-export const getServerSideProps = async () => {
-  try {
-      const data = await getCirujiasService();
-      return { props: { data } };
-  } catch (error) {
-      return { props: { data: null, error: error.message } };
-  }
-};
