@@ -11,6 +11,7 @@ const icon = (name) => (
 
 const ICONS = {
   user: icon('ic_user'),
+  carrito: icon('ic_cart'),
   Album: icon('ic_album'),
   ClipboardList: icon('ic_clipboard-list'),
   Activity: icon('ic_activity'),
@@ -27,7 +28,9 @@ const navConfig = [
       { title: 'Coordinar', path: PATH_DASHBOARD.three, icon: ICONS.Activity },
       { title: 'Crear procedimiento', path: PATH_DASHBOARD.one, icon: ICONS.ClipboardList },
       { title: 'Two', path: PATH_DASHBOARD.two, icon: ICONS.ecommerce },
-      { title: 'Calendario', path: PATH_DASHBOARD.calendario, icon: ICONS.calendar}
+      { title: 'recomendaciones', path: PATH_DASHBOARD.recomendaciones, icon: ICONS.carrito},
+      { title: 'Calendario', path: PATH_DASHBOARD.calendario, icon: ICONS.calendar},
+
     ],
   },
 
@@ -51,3 +54,4 @@ const navConfig = [
 ];
 
 export default navConfig;
+
