@@ -76,56 +76,7 @@ export default function Calendario({ cirujias = [], error = "" }) {
     return cirujiasFormateadas
   }
 
-  // Eventos de ejemplo, aquí podrías hacer una llamada a la API para obtenerlos
-  /* const events = [
-    {
-      title: 'Cirugía de cadera',
-      start: new Date(2024, 4, 15, 8, 0),
-      end: new Date(2024, 4, 15, 10, 0),
-      allDay: false,
-      color: high,
-      doctores: ['Dr. García', 'Dra. Martínez'],
-      paciente: 'Juan Pérez',
-      idOrden: 'ORD001',
-      quirofano: '1'
-    },
-    {
-      title: 'Cirugía de rodilla',
-      start: new Date(2024, 4, 16, 11, 0),
-      end: new Date(2024, 4, 16, 13, 0),
-      allDay: false,
-      color: normal,
-      doctores: ['Dr. Romero'],
-      paciente: 'Ana Gómez',
-      idOrden: 'ORD002',
-      quirofano: '2'
-
-    },
-    {
-      title: 'Cirugía de columna',
-      start: new Date(2024, 4, 17, 14, 0),
-      end: new Date(2024, 4, 17, 16, 0),
-      allDay: false,
-      color: low,
-      doctores: ['Dra. Sánchez'],
-      paciente: 'Carlos Ruiz',
-      idOrden: 'ORD003',
-      quirofano: '1'
-
-    },
-    {
-      title: 'Cirugía reconstructiva',
-      start: new Date(2024, 4, 18, 9, 0),
-      end: new Date(2024, 4, 19, 12, 0),
-      allDay: false,
-      color: high,
-      doctores: ['Dr. López', 'Dr. Mora'],
-      paciente: 'Luisa Navarro',
-      idOrden: 'ORD004',
-      quirofano: '2'
-    }
-  ]; */
-
+  
   const filteredEvents = selectedQuirofano === 'Todos' ? getCirujias() : getCirujias().filter(cirujia => cirujia.quirofano === selectedQuirofano);
 
   const eventStyleGetter = (event) => {
