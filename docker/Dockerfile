@@ -22,10 +22,12 @@ RUN npm i -g npm@latest; \
   # Install dependencies
   pnpm install
 
+#RUN ls && sed -i '11,14d' /var/www/html/node_modules/next-auth/utils/detect-host.js
 # Agregando los archivos del proyecto. TODO: Probar si es necesario
 ADD . .
-
 # Exponiendo el puerto 3000. TODO: Probar si es necesario
+ENV HOSTNAME 0.0.0.0
+
 EXPOSE 3000
 
 CMD ["pnpm", "run", "dev"]
