@@ -5,7 +5,28 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DashboardLayout from '../../layouts/dashboard';
 import { useSettingsContext } from '../../components/settings';
 
-function MedicalProcedureForm() {
+import { getPacientes, getMedicos } from '@/services/fhirService';
+
+export const getServerSideProps = async () => {
+  try {
+    const dataPaciente = await getPacientes();
+    const dataMedicos = await getMedicos();
+    
+    console.log("## pacientes", dataPaciente);
+    
+    return { props: { pacientes: dataPaciente, medicos: dataMedicos } };
+  } catch (error) {
+    
+    console.log("## kkkkkkkkkkkkkk", error);
+    
+    return { props: { data: null, error: error.message } };
+  }
+};
+
+CrearOrden.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
+
+export default function CrearOrden({ pacientes = [], medicos = [] }) {
+  const { themeStretch } = useSettingsContext();
   const [procedure, setProcedure] = useState('');
   const [procedureName, setProcedureName] = useState('');
   const [doctorId, setDoctorId] = useState('');
@@ -19,19 +40,24 @@ function MedicalProcedureForm() {
   });
   const [openSummary, setOpenSummary] = useState(false);
 
-  const doctorOptions = [
-    { label: '12345678 - Leo Messi', id: 1 },
-    { label: '87654321 - Lucho Suarez', id: 2 }
-  ];
 
-  const patientOptions = [
-    { label: '12345679 - Diego Forlan', id: 1 },
-    { label: '98765432 - Edi Cavani', id: 2 }
-  ];
+
+  const doctorOptions = medicos.map((medico, index) => ({
+    label: `${medico.nombre} ${medico.cedula}`,
+    id: index  // o cualquier otro identificador único que prefieras
+  }));
+
+  const patientOptions = pacientes.map((paciente, index) => ({
+      label: `${paciente.nombre} ${paciente.cedula}`,
+      id: index  // o cualquier otro identificador único que prefieras
+    }));
+
 
   const procedures = [
-    { value: 10, label: 'Procedimiento 1' },
-    { value: 20, label: 'Procedimiento 2' }
+    { value: 80146002, label: 'Apendicectomia' },
+    { value: 11466000, label: 'Operación cesárea' },
+    { value: 15732281000119103, label: 'Triquiasis de ambos ojos' },
+    { value: 414088005, label: 'Puente coronario de emergencia con injerto'}
   ];
 
   const handleRoleChange = (index, event) => {
@@ -76,6 +102,11 @@ function MedicalProcedureForm() {
 
   return (
     <>
+    <Head>
+        <title>Crear Orden | Dashboard</title>
+      </Head>
+
+      <Container maxWidth={themeStretch ? false : 'xl'}>
       <Typography variant="h4" align="center" gutterBottom>
         Crear procedimiento médico
       </Typography>
@@ -102,7 +133,16 @@ function MedicalProcedureForm() {
         />
 
         <Autocomplete
-          options={patientOptions}
+          options={pacientes.map((paciente, index) => {
+            console.log({
+              label: `${paciente.nombre} ${paciente.cedula}`,
+              id: index  // o cualquier otro identificador único que prefieras
+            });
+            return {
+              label: `${paciente.nombre} ${paciente.cedula}`,
+              id: index  // o cualquier otro identificador único que prefieras
+            }
+          })}
           getOptionLabel={(option) => option.label}
           renderInput={(params) => <TextField {...params} label="Paciente" margin="normal" />}
           onChange={(event, newValue) => setPatientId(newValue ? newValue.label : '')}
@@ -153,13 +193,18 @@ function MedicalProcedureForm() {
             label="Cardiologo"
             disabled
           />
+          <FormControlLabel
+            control={<Checkbox checked={preOps.surgeon} />}
+            label="nashe"
+            disabled
+          />
           <TextField
             label="Otros preoperatorios"
             variant="outlined"
             fullWidth
             margin="normal"
             value={preOps.others}
-            onChange={e => setPreOps({...preOps, others: e.target.value})}
+            onChange={e => setPreOps({ ...preOps, others: e.target.value })}
           />
         </FormGroup>
 
@@ -195,23 +240,6 @@ function MedicalProcedureForm() {
           <Button onClick={handleConfirm} color="primary">Confirmar</Button>
         </DialogActions>
       </Dialog>
-    </>
-  );
-}
-
-PageOne.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
-
-export default function PageOne() {
-  const { themeStretch } = useSettingsContext();
-
-  return (
-    <>
-      <Head>
-        <title>Crear Orden | Dashboard</title>
-      </Head>
-
-      <Container maxWidth={themeStretch ? false : 'xl'}>
-        <MedicalProcedureForm />
       </Container>
     </>
   );

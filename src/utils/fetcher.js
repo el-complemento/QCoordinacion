@@ -18,6 +18,7 @@ const fetcher = async (url, options = {}) => {
   try {
     const response = await fetch(`${API_GATEWAY_URL}/${url}`, finalOptions);
     if (!response.ok) {
+      console.log("·······response",response);
       throw new Error('Network response was not ok');
     }
     const data = await response.json();
