@@ -24,11 +24,9 @@ const navConfig = [
   {
     subheader: 'Menú',
     items: [
-      { title: 'Ordenes', path: PATH_DASHBOARD.one, icon: ICONS.ClipboardList },
-      { title: 'Coordinar', path: PATH_DASHBOARD.three, icon: ICONS.Activity },
+      { title: 'Ordenes', path: PATH_DASHBOARD.ordenes, icon: ICONS.ClipboardList },
       { title: 'Crear procedimiento', path: PATH_DASHBOARD.one, icon: ICONS.ClipboardList },
-      { title: 'Two', path: PATH_DASHBOARD.two, icon: ICONS.ecommerce },
-      { title: 'recomendaciones', path: PATH_DASHBOARD.recomendaciones, icon: ICONS.carrito},
+      { title: 'Recomendaciones', path: PATH_DASHBOARD.recomendaciones, icon: ICONS.carrito},
       { title: 'Calendario', path: PATH_DASHBOARD.calendario, icon: ICONS.calendar},
 
     ],
