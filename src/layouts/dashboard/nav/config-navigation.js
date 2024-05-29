@@ -25,7 +25,7 @@ const navConfig = [
     subheader: 'Menú',
     items: [
       { title: 'Ordenes', path: PATH_DASHBOARD.ordenes, icon: ICONS.ClipboardList },
-      { title: 'Crear procedimiento', path: PATH_DASHBOARD.one, icon: ICONS.ClipboardList },
+      { title: 'Crear orden', path: PATH_DASHBOARD.crearOrden, icon: ICONS.ClipboardList },
       { title: 'Recomendaciones', path: PATH_DASHBOARD.recomendaciones, icon: ICONS.carrito},
       { title: 'Calendario', path: PATH_DASHBOARD.calendario, icon: ICONS.calendar},
 
