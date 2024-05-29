@@ -44,7 +44,6 @@
     "react-hook-form": "^7.51.4",
     "react-i18next": "^14.1.1",
     "react-lazy-load-image-component": "^1.6.0",
-    "react-router-dom": "^6.23.1",
     "simplebar-react": "^3.2.5",
     "stylis": "^4.3.2",
     "stylis-plugin-rtl": "^2.1.1",
