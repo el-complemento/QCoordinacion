@@ -5,6 +5,7 @@ import { Container, Typography, Box, Stack } from '@mui/material';
 import DashboardLayout from '../../layouts/dashboard';
 // components
 import { useSettingsContext } from '../../components/settings';
+import { useRouter } from 'next/router';
 
 // sticky table
 import * as React from 'react';
@@ -21,9 +22,12 @@ import TableRow from '@mui/material/TableRow';
 import Button from '@mui/material/Button';
 
 function ContainedButtons() {
+  
+  const router = useRouter()
+  
   return (
     <Stack direction="row" spacing={2}>
-      <Button variant="contained">Crear Orden</Button>
+      <Button variant="contained" onClick={() => router.push('/dashboard/crear-orden')}>Crear Orden</Button>
     </Stack>
   );
 }
@@ -132,7 +136,7 @@ export default function PageOne() {
           <Typography variant="h3" component="h1">
             Ordenes
           </Typography>
-          <ContainedButtons />
+          <ContainedButtons/>
         </Stack>
 
         <StickyHeadTable />
