@@ -18,10 +18,10 @@ export const PATH_AUTH = {
 
 export const PATH_DASHBOARD = {
   root: ROOTS_DASHBOARD,
-  one: path(ROOTS_DASHBOARD, '/one'),
-  two: path(ROOTS_DASHBOARD, '/two'),
   calendario: path(ROOTS_DASHBOARD, '/calendario'),
   recomendaciones: path(ROOTS_DASHBOARD, '/recomendaciones'),
+  ordenes: path(ROOTS_DASHBOARD, '/ordenes'),
+  coordinar: path(ROOTS_DASHBOARD, '/coordinar'),
   user: {
     root: path(ROOTS_DASHBOARD, '/user'),
     four: path(ROOTS_DASHBOARD, '/user/four'),
