@@ -102,7 +102,7 @@ function MedicalProcedureForm() {
         <FloatingActionButtons />
         <Box flexGrow={1} textAlign="center">
           <Typography variant="h4" gutterBottom>
-            Crear procedimiento médico
+            Editar procedimiento médico
           </Typography>
         </Box>
         <Box width={48} /> {/* Placeholder to balance the layout */}
