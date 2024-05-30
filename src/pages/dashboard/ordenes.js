@@ -24,7 +24,7 @@ import TableRow from '@mui/material/TableRow';
 // Contained button component
 import Button from '@mui/material/Button';
 
-function ContainedButtons() {
+function CrearOrden() {
   
   const router = useRouter()
   
@@ -35,23 +35,34 @@ function ContainedButtons() {
   );
 }
 
+function EditarOrden() {
+  
+  const router = useRouter()
+  
+  return (
+    <Stack direction="row" spacing={2}>
+      <Button variant="outlined" onClick={() => router.push(PATH_DASHBOARD.editarOrden)}>Editar</Button>
+    </Stack>
+  );
+}
+
 // Sticky table columns and rows setup
 const columns = [
-  { id: 'name', label: 'Paciente', minWidth: 170 },
+  { id: 'id', label: 'ID', minWidth: 170 },
   { id: 'code', label: 'Procedimiento', minWidth: 100 },
-  {id: 'population',label: 'Preoperatorios',minWidth: 170,},
-  {id: 'nroOrden',label: 'Nro de orden',minWidth: 170,},
+  {id: 'paciente',label: 'Paciente',minWidth: 170,},
+  {id: 'preoperatorios',label: 'Preoperatorios',minWidth: 170,},
   {id: 'prioridad',label: 'Prioridad', minWidth: 170,},
 ];
 
-function createData(name, code, population, nroOrden, prioridad) {
-  return { name, code, population, nroOrden, prioridad};
+function createData(id, code, paciente, preoperatorios, prioridad) {
+  return {id, code, paciente, preoperatorios, prioridad};
 }
 
 const rows = [
-  createData('Diego Forlan', 'Apendectomía', 'Lista', 1, 'Alta'),
-  createData('Michael Jackson', 'Bypass', 'Lista', 2, 'Media'),
-  createData('Agustín Corujo', 'Implante capilar', 'Lista', 3, 'Baja'),
+  createData(1, 'Apendectomía', 'Diego Forlan', 'Lista', 'Alta'),
+  createData(2, 'Bypass', 'Michael Jackson', 'Lista', 'Media'),
+  createData(3, 'Implante capilar', 'Agustín Corujo',  'Lista', 'Baja'),
 ];
 
 function StickyHeadTable() {
@@ -82,6 +93,7 @@ function StickyHeadTable() {
                   {column.label}
                 </TableCell>
               ))}
+              <TableCell>Acciones</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -100,6 +112,9 @@ function StickyHeadTable() {
                         </TableCell>
                       );
                     })}
+                    <TableCell>
+                    <EditarOrden />
+                    </TableCell>
                   </TableRow>
                 );
               })}
@@ -139,7 +154,7 @@ export default function PageOne() {
           <Typography variant="h3" component="h1">
             Ordenes
           </Typography>
-          <ContainedButtons/>
+          <CrearOrden />
         </Stack>
 
         <StickyHeadTable />
