@@ -6,6 +6,9 @@ import DashboardLayout from '../../layouts/dashboard';
 // components
 import { useSettingsContext } from '../../components/settings';
 import { useRouter } from 'next/router';
+//routes
+// routes
+import { PATH_DASHBOARD } from '../../routes/paths';
 
 // sticky table
 import * as React from 'react';
@@ -27,7 +30,7 @@ function ContainedButtons() {
   
   return (
     <Stack direction="row" spacing={2}>
-      <Button variant="contained" onClick={() => router.push('/dashboard/crear-orden')}>Crear Orden</Button>
+      <Button variant="contained" onClick={() => router.push(PATH_DASHBOARD.crearOrden)}>Crear Orden</Button>
     </Stack>
   );
 }
