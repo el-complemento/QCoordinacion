@@ -1,9 +1,31 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
-import { Container, Typography, Button, Checkbox, FormControl, InputLabel, Select, MenuItem, FormGroup, FormControlLabel, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Autocomplete } from '@mui/material';
+import {
+  Container,
+  Typography,
+  Button,
+  Checkbox,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  FormGroup,
+  FormControlLabel,
+  TextField,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Autocomplete,
+  Box,
+  Fab
+} from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import DashboardLayout from '../../layouts/dashboard';
 import { useSettingsContext } from '../../components/settings';
+import { useRouter } from 'next/router';
 
 function MedicalProcedureForm() {
   const [procedure, setProcedure] = useState('');
@@ -13,8 +35,8 @@ function MedicalProcedureForm() {
   const [priority, setPriority] = useState('');
   const [roles, setRoles] = useState([{ id: '', role: '' }]);
   const [preOps, setPreOps] = useState({
-    anesthesia: true,  // preseleccionado
-    surgeon: true,  // preseleccionado
+    anesthesia: true, // preseleccionado
+    surgeon: true, // preseleccionado
     others: ''
   });
   const [openSummary, setOpenSummary] = useState(false);
@@ -76,9 +98,15 @@ function MedicalProcedureForm() {
 
   return (
     <>
-      <Typography variant="h4" align="center" gutterBottom>
-        Crear procedimiento médico
-      </Typography>
+      <Box display="flex" alignItems="center" mb={3}>
+        <FloatingActionButtons />
+        <Box flexGrow={1} textAlign="center">
+          <Typography variant="h4" gutterBottom>
+            Crear procedimiento médico
+          </Typography>
+        </Box>
+        <Box width={48} /> {/* Placeholder to balance the layout */}
+      </Box>
       <form onSubmit={handleSubmit} style={{ marginTop: '20px' }}>
         <FormControl fullWidth margin="normal">
           <InputLabel>Procedimiento</InputLabel>
@@ -159,7 +187,7 @@ function MedicalProcedureForm() {
             fullWidth
             margin="normal"
             value={preOps.others}
-            onChange={e => setPreOps({...preOps, others: e.target.value})}
+            onChange={e => setPreOps({ ...preOps, others: e.target.value })}
           />
         </FormGroup>
 
@@ -199,6 +227,18 @@ function MedicalProcedureForm() {
   );
 }
 
+function FloatingActionButtons() {
+  const router = useRouter()
+
+  return (
+    <Box sx={{ mr: 2 }}>
+      <Fab color="primary" aria-label="add" onClick={() => router.push('/dashboard/ordenes')}>
+        <ArrowBackIcon />
+      </Fab>
+    </Box>
+  );
+}
+
 PageOne.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 
 export default function PageOne() {
@@ -216,3 +256,4 @@ export default function PageOne() {
     </>
   );
 }
+
