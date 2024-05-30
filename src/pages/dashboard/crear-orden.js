@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
-import { Container, Typography, Button, Checkbox, FormControl, InputLabel, Select, MenuItem, FormGroup, FormControlLabel, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Autocomplete } from '@mui/material';
+import {
+  Container, Typography, Button, Checkbox, FormControl, InputLabel, Select, MenuItem, FormGroup, FormControlLabel, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Autocomplete
+} from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DashboardLayout from '../../layouts/dashboard';
 import { useSettingsContext } from '../../components/settings';
 
 import { getPacientes, getMedicos } from '@/services/fhirService';
+
+//components
+import SelectorPreoperatorios from '@/sections/dashboard/crear-orden/selectorPreoperatorios';
 
 export const getServerSideProps = async () => {
   try {
@@ -25,6 +30,11 @@ export const getServerSideProps = async () => {
 
 CrearOrden.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 
+const DEFAULT_PREOPERATORIOS = [
+  { id: 0, codigo: 306255001, disabled: true },
+  { id: 1, codigo: 308471005, disabled: true },
+]
+
 export default function CrearOrden({ pacientes = [], medicos = [] }) {
   const { themeStretch } = useSettingsContext();
   const [procedure, setProcedure] = useState('');
@@ -33,6 +43,7 @@ export default function CrearOrden({ pacientes = [], medicos = [] }) {
   const [patientId, setPatientId] = useState('');
   const [priority, setPriority] = useState('');
   const [roles, setRoles] = useState([{ id: 0, role: '' }]);
+  const [preoperatorios, setPreoperatorios] = useState(DEFAULT_PREOPERATORIOS);
   const [preOps, setPreOps] = useState({
     anesthesia: true,  // preseleccionado
     surgeon: true,  // preseleccionado
@@ -40,9 +51,9 @@ export default function CrearOrden({ pacientes = [], medicos = [] }) {
   });
   const [openSummary, setOpenSummary] = useState(false);
 
-  useEffect(()=> {
+  useEffect(() => {
     console.log(roles);
-  },[roles])
+  }, [roles])
 
   const doctorOptions = medicos.map((medico, index) => ({
     label: `${medico.nombre} - ${medico.cedula}`,
@@ -62,12 +73,11 @@ export default function CrearOrden({ pacientes = [], medicos = [] }) {
     { value: 414088005, label: 'Puente coronario de emergencia con injerto' }
   ];
 
-  const rolesCirugia =[
+  const rolesCirugia = [
     { value: 17561000, label: 'Cardiologo' },
     { value: 88189002, label: 'Anestesista' },
     { value: 78703002, label: 'Cirujano' },
-    { value: 158994007, label: 'Enfermero' }, //staff nurse(?
-    
+    { value: 158994007, label: 'Enfermero' },
   ]
 
   const handleRoleChange = (index, event) => {
@@ -94,7 +104,7 @@ export default function CrearOrden({ pacientes = [], medicos = [] }) {
   };
 
   const handleConfirm = () => {
-    console.log({ procedure, procedureName, doctorId, patientId, priority, roles, preOps });
+    console.log({ procedure, procedureName, doctorId, patientId, priority, roles, preOps,  });
     setOpenSummary(false);
   };
 
@@ -172,7 +182,7 @@ export default function CrearOrden({ pacientes = [], medicos = [] }) {
                 onChange={(e) => handleRoleChange(index, e)}
                 label={`Rol ${index + 1}`}
               >
-                {rolesCirugia.map(({value, label}) => (
+                {rolesCirugia.map(({ value, label }) => (
                   <MenuItem key={value} value={value}>{label}</MenuItem>
                 ))}
               </Select>
@@ -183,32 +193,7 @@ export default function CrearOrden({ pacientes = [], medicos = [] }) {
             Agregar rol
           </Button>
 
-          <Typography variant="h6" style={{ marginTop: '30px', marginBottom: '10px' }}>Preoperatorios necesarios</Typography>
-          <FormGroup>
-            <FormControlLabel
-              control={<Checkbox checked={preOps.anesthesia} />}
-              label="Anestesia"
-              disabled
-            />
-            <FormControlLabel
-              control={<Checkbox checked={preOps.surgeon} />}
-              label="Cardiologo"
-              disabled
-            />
-            <FormControlLabel
-              control={<Checkbox checked={preOps.surgeon} />}
-              label="nashe"
-              disabled
-            />
-            <TextField
-              label="Otros preoperatorios"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              value={preOps.others}
-              onChange={e => setPreOps({ ...preOps, others: e.target.value })}
-            />
-          </FormGroup>
+          <SelectorPreoperatorios preoperatorios={preoperatorios} setPreoperatorios={setPreoperatorios} />
 
           <Button type="submit" variant="contained" style={{ display: 'block', marginTop: '20px', marginLeft: 'auto', marginRight: 'auto' }}>
             Crear procedimiento
@@ -221,9 +206,9 @@ export default function CrearOrden({ pacientes = [], medicos = [] }) {
             <DialogContentText>
               <Typography variant="h6">Procedimiento</Typography>
               <Typography>{procedureName}</Typography>
-              <Typography variant="h6">Cédula del Doctor</Typography>
+              <Typography variant="h6">Cédula del doctor</Typography>
               <Typography>{doctorId}</Typography>
-              <Typography variant="h6">Cédula del Paciente</Typography>
+              <Typography variant="h6">Cédula del paciente</Typography>
               <Typography>{patientId}</Typography>
               <Typography variant="h6">Prioridad</Typography>
               <Typography>{priority}</Typography>
