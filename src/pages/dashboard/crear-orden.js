@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
 import { Container, Typography, Button, Checkbox, FormControl, InputLabel, Select, MenuItem, FormGroup, FormControlLabel, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Autocomplete } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
@@ -32,7 +32,7 @@ export default function CrearOrden({ pacientes = [], medicos = [] }) {
   const [doctorId, setDoctorId] = useState('');
   const [patientId, setPatientId] = useState('');
   const [priority, setPriority] = useState('');
-  const [roles, setRoles] = useState([{ id: '', role: '' }]);
+  const [roles, setRoles] = useState([{ id: 0, role: '' }]);
   const [preOps, setPreOps] = useState({
     anesthesia: true,  // preseleccionado
     surgeon: true,  // preseleccionado
@@ -40,7 +40,9 @@ export default function CrearOrden({ pacientes = [], medicos = [] }) {
   });
   const [openSummary, setOpenSummary] = useState(false);
 
-
+  useEffect(()=> {
+    console.log(roles);
+  },[roles])
 
   const doctorOptions = medicos.map((medico, index) => ({
     label: `${medico.nombre} - ${medico.cedula}`,
@@ -59,6 +61,14 @@ export default function CrearOrden({ pacientes = [], medicos = [] }) {
     { value: 15732281000119103, label: 'Triquiasis de ambos ojos' },
     { value: 414088005, label: 'Puente coronario de emergencia con injerto' }
   ];
+
+  const rolesCirugia =[
+    { value: 17561000, label: 'Cardiologo' },
+    { value: 88189002, label: 'Anestesista' },
+    { value: 78703002, label: 'Cirujano' },
+    { value: 158994007, label: 'Enfermero' }, //staff nurse(?
+    
+  ]
 
   const handleRoleChange = (index, event) => {
     const newRoles = roles.map((role, idx) => {
@@ -162,8 +172,9 @@ export default function CrearOrden({ pacientes = [], medicos = [] }) {
                 onChange={(e) => handleRoleChange(index, e)}
                 label={`Rol ${index + 1}`}
               >
-                <MenuItem value="Anestesiólogo">Anestesiólogo</MenuItem>
-                <MenuItem value="Enfermero">Enfermero</MenuItem>
+                {rolesCirugia.map(({value, label}) => (
+                  <MenuItem key={value} value={value}>{label}</MenuItem>
+                ))}
               </Select>
             </FormControl>
           ))}
