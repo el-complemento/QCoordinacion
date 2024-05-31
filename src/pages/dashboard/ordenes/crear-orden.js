@@ -1,13 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
 import {
-  Container, Typography, Button, FormControl, InputLabel, Select, MenuItem, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Autocomplete
+  Container,
+  Typography,
+  Button,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  TextField,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Autocomplete,
 } from '@mui/material';
 
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import DashboardLayout from '../../layouts/dashboard';
-import { useSettingsContext } from '../../components/settings';
+import DashboardLayout from '@/layouts/dashboard/DashboardLayout';
+import { useSettingsContext } from '@/components/settings';
 import { useRouter } from 'next/router';
 
 //components
@@ -21,12 +34,11 @@ export const getServerSideProps = async () => {
     const dataPaciente = await getPacientes();
     const dataMedicos = await getMedicos();
 
-    console.log("## pacientes", dataPaciente);
+    console.log('## pacientes', dataPaciente);
 
     return { props: { pacientes: dataPaciente, medicos: dataMedicos } };
   } catch (error) {
-
-    console.log("## error", error);
+    console.log('## error', error);
 
     return { props: { data: null, error: error.message } };
   }
@@ -37,16 +49,15 @@ CrearOrden.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 const DEFAULT_PREOPERATORIOS = [
   { id: 0, codigo: 306255001, disabled: true },
   { id: 1, codigo: 308471005, disabled: true },
-]
+];
 
 const POSIBLES_PREOPERATORIOS = [
   { value: 306255001, label: 'Derivación a anestesista', disabled: true },
   { value: 308471005, label: 'Derivación al cardiólogo', disabled: true },
   { value: 27171005, label: 'Análisis de orina' },
   { value: 301838008, label: 'Análisis de sangre' },
-  { value: 66238006, label: 'Análisis inmunorradiométrico' }
-]
-
+  { value: 66238006, label: 'Análisis inmunorradiométrico' },
+];
 
 export default function CrearOrden({ pacientes = [], medicos = [] }) {
   const { themeStretch } = useSettingsContext();
@@ -61,31 +72,30 @@ export default function CrearOrden({ pacientes = [], medicos = [] }) {
   const [preOps, setPreOps] = useState({
     anesthesia: true, // preseleccionado
     surgeon: true, // preseleccionado
-    others: ''
+    others: '',
   });
   const [openSummary, setOpenSummary] = useState(false);
   useEffect(() => {
     console.log(roles);
-  }, [roles])
+  }, [roles]);
 
   const doctorOptions = medicos.map((medico, index) => ({
     ...medico,
     label: `${medico.nombre} - ${medico.cedula}`,
-    id: index  // o cualquier otro identificador único que prefieras
+    id: index, // o cualquier otro identificador único que prefieras
   }));
 
   const patientOptions = pacientes.map((paciente, index) => ({
     ...paciente,
     label: `${paciente.nombre} - ${paciente.cedula}`,
-    id: index  // o cualquier otro identificador único que prefieras
+    id: index, // o cualquier otro identificador único que prefieras
   }));
-
 
   const procedures = [
     { value: 80146002, label: 'Apendicectomia' },
     { value: 11466000, label: 'Operación cesárea' },
     { value: 15732281000119103, label: 'Triquiasis de ambos ojos' },
-    { value: 414088005, label: 'Puente coronario de emergencia con injerto' }
+    { value: 414088005, label: 'Puente coronario de emergencia con injerto' },
   ];
 
   const rolesCirugia = [
@@ -93,7 +103,7 @@ export default function CrearOrden({ pacientes = [], medicos = [] }) {
     { value: 88189002, label: 'Anestesista' },
     { value: 78703002, label: 'Cirujano' },
     { value: 158994007, label: 'Enfermero' },
-  ]
+  ];
 
   const handleRoleChange = (index, event) => {
     const newRoles = roles.map((role, idx) => {
@@ -111,7 +121,7 @@ export default function CrearOrden({ pacientes = [], medicos = [] }) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (!procedure || !doctorId || !patientId || !priority || roles.some(r => !r.role)) {
+    if (!procedure || !doctorId || !patientId || !priority || roles.some((r) => !r.role)) {
       alert('Por favor, completa todos los campos requeridos.');
       return;
     }
@@ -120,11 +130,11 @@ export default function CrearOrden({ pacientes = [], medicos = [] }) {
 
   const handleConfirm = async () => {
     const rolesData = roles.map(({ role }) => {
-      return rolesCirugia.find(({ value }) => role == value)
-    })
+      return rolesCirugia.find(({ value }) => role == value);
+    });
     const preoperatoriosData = preoperatorios.map(({ codigo }) => {
-      return POSIBLES_PREOPERATORIOS.find(({ value }) => codigo == value)
-    })
+      return POSIBLES_PREOPERATORIOS.find(({ value }) => codigo == value);
+    });
     // const horasEstimadasCirugia = horasEstimadasIngresadas
 
     const data = {
@@ -135,10 +145,10 @@ export default function CrearOrden({ pacientes = [], medicos = [] }) {
       priority,
       roles: rolesData,
       preoperatorios: preoperatoriosData,
-      horasEstimadas: horasEstimadas
-    }
+      horasEstimadas: horasEstimadas,
+    };
     /* console.log(data); */
-    await postOrdenService(data)
+    await postOrdenService(data);
     setOpenSummary(false);
   };
 
@@ -148,7 +158,7 @@ export default function CrearOrden({ pacientes = [], medicos = [] }) {
 
   const handleProcedureChange = (event) => {
     const value = event.target.value;
-    const selectedProcedure = procedures.find(p => p.value === value);
+    const selectedProcedure = procedures.find((p) => p.value === value);
     const name = selectedProcedure ? selectedProcedure.label : '';
     setProcedure(value);
     setProcedureName(name);
@@ -167,13 +177,11 @@ export default function CrearOrden({ pacientes = [], medicos = [] }) {
         <form onSubmit={handleSubmit} style={{ marginTop: '20px' }}>
           <FormControl fullWidth margin="normal">
             <InputLabel>Procedimiento</InputLabel>
-            <Select
-              value={procedure}
-              onChange={handleProcedureChange}
-              label="Procedimiento"
-            >
+            <Select value={procedure} onChange={handleProcedureChange} label="Procedimiento">
               {procedures.map((proc) => (
-                <MenuItem key={proc.value} value={proc.value}>{proc.label}</MenuItem>
+                <MenuItem key={proc.value} value={proc.value}>
+                  {proc.label}
+                </MenuItem>
               ))}
             </Select>
           </FormControl>
@@ -197,7 +205,7 @@ export default function CrearOrden({ pacientes = [], medicos = [] }) {
             <InputLabel>Prioridad</InputLabel>
             <Select
               value={priority}
-              onChange={e => setPriority(e.target.value)}
+              onChange={(e) => setPriority(e.target.value)}
               label="Prioridad"
             >
               <MenuItem value="Alta">Alta</MenuItem>
@@ -206,7 +214,9 @@ export default function CrearOrden({ pacientes = [], medicos = [] }) {
             </Select>
           </FormControl>
 
-          <Typography variant="h6" style={{ marginTop: '30px', marginBottom: '10px' }}>Roles necesarios</Typography>
+          <Typography variant="h6" style={{ marginTop: '30px', marginBottom: '10px' }}>
+            Roles necesarios
+          </Typography>
           {roles.map((role, index) => (
             <FormControl key={index} fullWidth margin="normal">
               <InputLabel>Rol {index + 1}</InputLabel>
@@ -216,30 +226,31 @@ export default function CrearOrden({ pacientes = [], medicos = [] }) {
                 label={`Rol ${index + 1}`}
               >
                 {rolesCirugia.map(({ value, label }) => (
-                  <MenuItem key={value} value={value}>{label}</MenuItem>
+                  <MenuItem key={value} value={value}>
+                    {label}
+                  </MenuItem>
                 ))}
               </Select>
             </FormControl>
           ))}
 
-          <Button onClick={addRole} startIcon={<AddCircleOutlineIcon />} style={{ marginTop: '10px', marginBottom: '20px' }}>
+          <Button
+            onClick={addRole}
+            startIcon={<AddCircleOutlineIcon />}
+            style={{ marginTop: '10px', marginBottom: '20px' }}
+          >
             Agregar rol
           </Button>
 
-          <Typography>
-            Horas estimadas
-          </Typography>
+          <Typography>Horas estimadas</Typography>
           <FormControl fullWidth margin="normal">
-
             <TextField
               id="horasEstimadasIngresadas"
               label="Horas"
               variant="outlined"
-              value={horasEstimadas}  
-              onChange={e => setHoras(e.target.value)}  
+              value={horasEstimadas}
+              onChange={(e) => setHoras(e.target.value)}
             />
-              
-
           </FormControl>
 
           <SelectorPreoperatorios
@@ -248,7 +259,11 @@ export default function CrearOrden({ pacientes = [], medicos = [] }) {
             defaultPreOperatorios={POSIBLES_PREOPERATORIOS}
           />
 
-          <Button type="submit" variant="contained" style={{ display: 'block', marginTop: '20px', marginLeft: 'auto', marginRight: 'auto' }}>
+          <Button
+            type="submit"
+            variant="contained"
+            style={{ display: 'block', marginTop: '20px', marginLeft: 'auto', marginRight: 'auto' }}
+          >
             Crear procedimiento
           </Button>
         </form>
@@ -276,8 +291,12 @@ export default function CrearOrden({ pacientes = [], medicos = [] }) {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleModify} color="primary">Modificar</Button>
-            <Button onClick={handleConfirm} color="primary">Confirmar</Button>
+            <Button onClick={handleModify} color="primary">
+              Modificar
+            </Button>
+            <Button onClick={handleConfirm} color="primary">
+              Confirmar
+            </Button>
           </DialogActions>
         </Dialog>
       </Container>

@@ -20,9 +20,12 @@ export const PATH_DASHBOARD = {
   root: ROOTS_DASHBOARD,
   calendario: path(ROOTS_DASHBOARD, '/calendario'),
   recomendaciones: path(ROOTS_DASHBOARD, '/recomendaciones'),
-  ordenes: path(ROOTS_DASHBOARD, '/ordenes'),
+  ordenes: {
+    root: path(ROOTS_DASHBOARD, '/ordenes'),
+    verOrdenes: path(ROOTS_DASHBOARD, '/ordenes/listado'),
+    crearOrden: path(ROOTS_DASHBOARD, '/ordenes/crear-orden'),
+  },
   coordinar: path(ROOTS_DASHBOARD, '/coordinar'),
-  crearOrden: path(ROOTS_DASHBOARD, '/crear-orden'),
   user: {
     root: path(ROOTS_DASHBOARD, '/user'),
     four: path(ROOTS_DASHBOARD, '/user/four'),

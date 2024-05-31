@@ -15,7 +15,7 @@ const ICONS = {
   Album: icon('ic_album'),
   ClipboardList: icon('ic_clipboard-list'),
   Activity: icon('ic_activity'),
-  calendar: icon('ic_calendar-days')
+  calendar: icon('ic_calendar-days'),
 };
 
 const navConfig = [
@@ -24,10 +24,18 @@ const navConfig = [
   {
     subheader: 'Menú',
     items: [
-      { title: 'Ordenes', path: PATH_DASHBOARD.ordenes, icon: ICONS.ClipboardList },
-      { title: 'Coordinar', path: PATH_DASHBOARD.recomendaciones, icon: ICONS.Activity},
-      { title: 'Calendario', path: PATH_DASHBOARD.calendario, icon: ICONS.calendar},
-
+      {
+        title: 'Ordenes',
+        path: PATH_DASHBOARD.ordenes.root,
+        icon: ICONS.ClipboardList,
+        children: [
+          { title: 'Ver ordenes', path: PATH_DASHBOARD.ordenes.verOrdenes },
+          { title: '', path: PATH_DASHBOARD.ordenes.verOrdenes },
+          { title: 'Crear orden', path: PATH_DASHBOARD.ordenes.crearOrden },
+        ],
+      },
+      { title: 'Coordinar', path: PATH_DASHBOARD.recomendaciones, icon: ICONS.Activity },
+      { title: 'Calendario', path: PATH_DASHBOARD.calendario, icon: ICONS.calendar },
     ],
   },
 
@@ -51,4 +59,3 @@ const navConfig = [
 ];
 
 export default navConfig;
-

@@ -5,10 +5,10 @@ import Head from 'next/head';
 import { Button, Stack, Container, Typography } from '@mui/material';
 
 // layouts
-import DashboardLayout from '../../layouts/dashboard';
+import DashboardLayout from '@/layouts/dashboard/DashboardLayout';
 
 // components
-import { useSettingsContext } from '../../components/settings';
+import { useSettingsContext } from '@/components/settings';
 import TablaOrdenes from '@/sections/dashboard/ordenes/TablaOrdenes';
 
 // services
