@@ -30,7 +30,6 @@ const navConfig = [
         icon: ICONS.ClipboardList,
         children: [
           { title: 'Ver ordenes', path: PATH_DASHBOARD.ordenes.verOrdenes },
-          { title: '', path: PATH_DASHBOARD.ordenes.verOrdenes },
           { title: 'Crear orden', path: PATH_DASHBOARD.ordenes.crearOrden },
         ],
       },
