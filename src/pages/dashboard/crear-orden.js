@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
 import {
-  Container, Typography, Button, Checkbox, FormControl, InputLabel, Select, MenuItem, FormGroup, FormControlLabel, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Autocomplete
+  Container, Typography, Button, FormControl, InputLabel, Select, MenuItem, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Autocomplete
 } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DashboardLayout from '../../layouts/dashboard';
 import { useSettingsContext } from '../../components/settings';
 
-import { getPacientes, getMedicos } from '@/services/fhirService';
-
 //components
 import SelectorPreoperatorios from '@/sections/dashboard/crear-orden/selectorPreoperatorios';
+
+//services
+import { postOrdenService, getPacientes, getMedicos } from '@/services/fhirService';
 
 export const getServerSideProps = async () => {
   try {
@@ -35,6 +36,15 @@ const DEFAULT_PREOPERATORIOS = [
   { id: 1, codigo: 308471005, disabled: true },
 ]
 
+const POSIBLES_PREOPERATORIOS = [
+  { value: 306255001, label: 'Derivación a anestesista', disabled: true },
+  { value: 308471005, label: 'Derivación al cardiólogo', disabled: true },
+  { value: 27171005, label: 'Análisis de orina' },
+  { value: 301838008, label: 'Análisis de sangre' },
+  { value: 66238006, label: 'Análisis inmunorradiométrico' }
+]
+
+
 export default function CrearOrden({ pacientes = [], medicos = [] }) {
   const { themeStretch } = useSettingsContext();
   const [procedure, setProcedure] = useState('');
@@ -56,11 +66,13 @@ export default function CrearOrden({ pacientes = [], medicos = [] }) {
   }, [roles])
 
   const doctorOptions = medicos.map((medico, index) => ({
+    ...medico,
     label: `${medico.nombre} - ${medico.cedula}`,
     id: index  // o cualquier otro identificador único que prefieras
   }));
 
   const patientOptions = pacientes.map((paciente, index) => ({
+    ...paciente,
     label: `${paciente.nombre} - ${paciente.cedula}`,
     id: index  // o cualquier otro identificador único que prefieras
   }));
@@ -103,8 +115,26 @@ export default function CrearOrden({ pacientes = [], medicos = [] }) {
     setOpenSummary(true);
   };
 
-  const handleConfirm = () => {
-    console.log({ procedure, procedureName, doctorId, patientId, priority, roles, preOps,  });
+  const handleConfirm = async () => {
+    const rolesData = roles.map(({ role }) => {
+      return rolesCirugia.find(({ value }) => role == value)
+    })
+    const preoperatoriosData = preoperatorios.map(({ codigo }) => {
+      return POSIBLES_PREOPERATORIOS.find(({ value }) => codigo == value)
+    })
+
+    const data = {
+      procedure,
+      procedureName,
+      doctorId,
+      patientId,
+      priority,
+      roles: rolesData,
+      preoperatorios: preoperatoriosData,
+      horasEstimadas: 1
+    }
+    /* console.log(data); */
+    await postOrdenService(data)
     setOpenSummary(false);
   };
 
@@ -148,7 +178,7 @@ export default function CrearOrden({ pacientes = [], medicos = [] }) {
             options={doctorOptions}
             getOptionLabel={(option) => option.label}
             renderInput={(params) => <TextField {...params} label="Doctor" margin="normal" />}
-            onChange={(event, newValue) => setDoctorId(newValue ? newValue.label : '')}
+            onChange={(_, newValue) => setDoctorId(newValue ? newValue.cedula : '')}
             fullWidth
           />
 
@@ -156,7 +186,7 @@ export default function CrearOrden({ pacientes = [], medicos = [] }) {
             options={patientOptions}
             getOptionLabel={(option) => option.label}
             renderInput={(params) => <TextField {...params} label="Paciente" margin="normal" />}
-            onChange={(event, newValue) => setPatientId(newValue ? newValue.label : '')}
+            onChange={(_, newValue) => setPatientId(newValue ? newValue.cedula : '')}
             fullWidth
           />
 
@@ -193,7 +223,11 @@ export default function CrearOrden({ pacientes = [], medicos = [] }) {
             Agregar rol
           </Button>
 
-          <SelectorPreoperatorios preoperatorios={preoperatorios} setPreoperatorios={setPreoperatorios} />
+          <SelectorPreoperatorios
+            preoperatorios={preoperatorios}
+            setPreoperatorios={setPreoperatorios}
+            defaultPreOperatorios={POSIBLES_PREOPERATORIOS}
+          />
 
           <Button type="submit" variant="contained" style={{ display: 'block', marginTop: '20px', marginLeft: 'auto', marginRight: 'auto' }}>
             Crear procedimiento
