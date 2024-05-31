@@ -6,15 +6,7 @@ import {
 } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
-function SelectorPreoperatorios({ preoperatorios = [], setPreoperatorios = () => { } }) {
-
-  const defaultPreOperatorios = [
-    { value: 306255001, label: 'Derivación a anestesista', disabled: true },
-    { value: 308471005, label: 'Derivación al cardiólogo', disabled: true },
-    { value: 27171005, label: 'Análisis de orina' },
-    { value: 301838008, label: 'Análisis de sangre' },
-    { value: 66238006, label: 'Análisis inmunorradiométrico' }
-  ]
+function SelectorPreoperatorios({ preoperatorios = [], setPreoperatorios = () => { }, defaultPreOperatorios = [] }) {
 
   const addPreOperatorio = () => {
     setPreoperatorios([...preoperatorios, { id: preoperatorios.length, codigo: null }]);
@@ -44,7 +36,7 @@ function SelectorPreoperatorios({ preoperatorios = [], setPreoperatorios = () =>
               onChange={(e) => handlePreOperatorioChange(index, e)}
               label={`Preoperatorio ${index + 1}`}
             >
-              {defaultPreOperatorios.map(({ value, label, disabled = false}) => (
+              {defaultPreOperatorios.map(({ value, label, disabled = false }) => (
                 <MenuItem key={value} value={value} disabled={disabled}>{label}</MenuItem>
               ))}
             </Select>
