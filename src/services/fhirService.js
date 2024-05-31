@@ -33,7 +33,7 @@ export const postOrdenService = async (data) => {
     "status": "on-hold",
     "occurrenceTiming": {
       "repeat": {
-        "duration": 2,
+        "duration": data.horasEstimadas,
         "durationUnit": "h"
       }
     },
@@ -111,5 +111,10 @@ export const getPacientes = async () => {
 
 export const getMedicos = async () => {
   const endpoint = `api/v1/practicioners`;
+  return await fetcher(endpoint);
+}
+
+export const getOrdenesService = async () => {
+  const endpoint = `api/v1/service-requests`;
   return await fetcher(endpoint);
 }

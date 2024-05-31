@@ -54,13 +54,13 @@ export default function CrearOrden({ pacientes = [], medicos = [] }) {
   const [priority, setPriority] = useState('');
   const [roles, setRoles] = useState([{ id: 0, role: '' }]);
   const [preoperatorios, setPreoperatorios] = useState(DEFAULT_PREOPERATORIOS);
+  const [horasEstimadas, setHoras] = useState('');
   const [preOps, setPreOps] = useState({
     anesthesia: true,  // preseleccionado
     surgeon: true,  // preseleccionado
     others: ''
   });
   const [openSummary, setOpenSummary] = useState(false);
-
   useEffect(() => {
     console.log(roles);
   }, [roles])
@@ -122,6 +122,7 @@ export default function CrearOrden({ pacientes = [], medicos = [] }) {
     const preoperatoriosData = preoperatorios.map(({ codigo }) => {
       return POSIBLES_PREOPERATORIOS.find(({ value }) => codigo == value)
     })
+    // const horasEstimadasCirugia = horasEstimadasIngresadas
 
     const data = {
       procedure,
@@ -131,7 +132,7 @@ export default function CrearOrden({ pacientes = [], medicos = [] }) {
       priority,
       roles: rolesData,
       preoperatorios: preoperatoriosData,
-      horasEstimadas: 1
+      horasEstimadas: horasEstimadas
     }
     /* console.log(data); */
     await postOrdenService(data)
@@ -222,6 +223,22 @@ export default function CrearOrden({ pacientes = [], medicos = [] }) {
           <Button onClick={addRole} startIcon={<AddCircleOutlineIcon />} style={{ marginTop: '10px', marginBottom: '20px' }}>
             Agregar rol
           </Button>
+
+          <Typography>
+            Horas estimadas
+          </Typography>
+          <FormControl fullWidth margin="normal">
+
+            <TextField
+              id="horasEstimadasIngresadas"
+              label="Horas"
+              variant="outlined"
+              value={horasEstimadas}  
+              onChange={e => setHoras(e.target.value)}  
+            />
+              
+
+          </FormControl>
 
           <SelectorPreoperatorios
             preoperatorios={preoperatorios}

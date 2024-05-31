@@ -6,6 +6,9 @@ import DashboardLayout from '../../layouts/dashboard';
 // components
 import { useSettingsContext } from '../../components/settings';
 
+import { getOrdenesService } from '@/services/fhirService';
+
+
 // sticky table
 import * as React from 'react';
 import Paper from '@mui/material/Paper';
@@ -20,6 +23,20 @@ import TableRow from '@mui/material/TableRow';
 // Contained button component
 import Button from '@mui/material/Button';
 
+export const getServerSideProps = async () => {
+  try {
+    const data = await getOrdenesService();
+
+    console.log("## ORDENES", data);
+
+    return { props: { ordenes: data } };
+  } catch (error) {
+    return { props: { data: null, error: error.message } };
+  }
+};
+
+
+
 function ContainedButtons() {
   return (
     <Stack direction="row" spacing={2}>
@@ -29,22 +46,24 @@ function ContainedButtons() {
 }
 
 // Sticky table columns and rows setup
+// Sticky table columns and rows setup
 const columns = [
   { id: 'name', label: 'Paciente', minWidth: 170 },
   { id: 'code', label: 'Procedimiento', minWidth: 100 },
-  {id: 'population',label: 'Preoperatorios',minWidth: 170,},
-  {id: 'nroOrden',label: 'Nro de orden',minWidth: 170,},
-  {id: 'prioridad',label: 'Prioridad', minWidth: 170,},
+  { id: 'nroOrden', label: 'Nro de orden', minWidth: 170 },
+  { id: 'prioridad', label: 'Prioridad', minWidth: 170 },
+  { id: 'roles', label: 'Roles', minWidth: 200 },
+  { id: 'horasEstimadas', label: 'Horas Estimadas', minWidth: 170 }  // Nueva columna agregada
 ];
 
-function createData(name, code, population, nroOrden, prioridad) {
-  return { name, code, population, nroOrden, prioridad};
+function createData(name, code, nroOrden, prioridad, roles, horasEstimadas) {
+  return { name, code, nroOrden, prioridad, roles, horasEstimadas };
 }
 
 const rows = [
-  createData('Diego Forlan', 'Apendectomía', 'Lista', 1, 'Alta'),
-  createData('Michael Jackson', 'Bypass', 'Lista', 2, 'Media'),
-  createData('Agustín Corujo', 'Implante capilar', 'Lista', 3, 'Baja'),
+  createData('Diego Forlan', 'Apendectomía', 'Lista', 1, 'Alta', 'Cirujano, Anestesista', '2 horas'),
+  createData('Michael Jackson', 'Bypass', 'Lista', 2, 'Media', 'Cirujano, Cardiólogo', '3 horas'),
+  createData('Agustín Corujo', 'Implante capilar', 'Lista', 3, 'Baja', 'Dermatólogo', '1 hora'),
 ];
 
 function StickyHeadTable() {
@@ -118,8 +137,25 @@ PageOne.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 
 // ----------------------------------------------------------------------
 
-export default function PageOne() {
+export default function PageOne({ordenes = [], error = ""}) {
   const { themeStretch } = useSettingsContext();
+
+
+  const getOrdenes = () =>{
+    const ordenesFormateadas = ordenes.map(orden =>({
+      ...orden,
+      paciente: orden.paciente,
+      procedimiento:orden.procedimiento,
+      numeroDeOrden: orden.idOrden,
+      prioridad: orden.prioridad,
+      roles: orden.rolesNecesarios,
+      horasEstimadas: orden.horasEstimadas
+    }))
+    console.log(ordenesFormateadas)
+    return ordenesFormateadas
+  }
+
+
 
   return (
     <>
