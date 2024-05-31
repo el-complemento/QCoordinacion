@@ -70,8 +70,7 @@ export default function Calendario({ cirujias = [], error = "" }) {
     const cirujiasFormateadas = cirujias.map(cirujia => ({
       ...cirujia,
       start: parseCustomFhirDate(cirujia.start),
-      end: parseCustomFhirDate(cirujia.end),
-      color: cirujia.color.toLowerCase()
+      end: parseCustomFhirDate(cirujia.end)
     }))
     console.log(cirujiasFormateadas);
     return cirujiasFormateadas
