@@ -15,7 +15,7 @@ const ICONS = {
   Album: icon('ic_album'),
   ClipboardList: icon('ic_clipboard-list'),
   Activity: icon('ic_activity'),
-  calendar: icon('ic_calendar')
+  calendar: icon('ic_calendar-days')
 };
 
 const navConfig = [
@@ -25,8 +25,7 @@ const navConfig = [
     subheader: 'Menú',
     items: [
       { title: 'Ordenes', path: PATH_DASHBOARD.ordenes, icon: ICONS.ClipboardList },
-      { title: 'Crear orden', path: PATH_DASHBOARD.crearOrden, icon: ICONS.ClipboardList },
-      { title: 'Recomendaciones', path: PATH_DASHBOARD.recomendaciones, icon: ICONS.carrito},
+      { title: 'Coordinar', path: PATH_DASHBOARD.recomendaciones, icon: ICONS.Activity},
       { title: 'Calendario', path: PATH_DASHBOARD.calendario, icon: ICONS.calendar},
 
     ],

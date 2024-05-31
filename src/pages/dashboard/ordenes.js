@@ -15,6 +15,7 @@ import TablaOrdenes from '@/sections/dashboard/ordenes/TablaOrdenes';
 import { getOrdenesService } from '@/services/fhirService';
 
 
+
 // ----------------------------------------------------------------------
 
 Ordenes.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
@@ -68,6 +69,7 @@ export default function Ordenes({ ordenes = [], error = "" }) {
           <Stack direction="row" spacing={2}>
             <Button variant="contained">Crear Orden</Button>
           </Stack>
+
         </Stack>
 
         <TablaOrdenes ordenes={ordenes}/>

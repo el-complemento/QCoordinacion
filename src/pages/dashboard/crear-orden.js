@@ -3,9 +3,12 @@ import Head from 'next/head';
 import {
   Container, Typography, Button, FormControl, InputLabel, Select, MenuItem, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Autocomplete
 } from '@mui/material';
+
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import DashboardLayout from '../../layouts/dashboard';
 import { useSettingsContext } from '../../components/settings';
+import { useRouter } from 'next/router';
 
 //components
 import SelectorPreoperatorios from '@/sections/dashboard/crear-orden/selectorPreoperatorios';
@@ -56,8 +59,8 @@ export default function CrearOrden({ pacientes = [], medicos = [] }) {
   const [preoperatorios, setPreoperatorios] = useState(DEFAULT_PREOPERATORIOS);
   const [horasEstimadas, setHoras] = useState('');
   const [preOps, setPreOps] = useState({
-    anesthesia: true,  // preseleccionado
-    surgeon: true,  // preseleccionado
+    anesthesia: true, // preseleccionado
+    surgeon: true, // preseleccionado
     others: ''
   });
   const [openSummary, setOpenSummary] = useState(false);
@@ -190,7 +193,6 @@ export default function CrearOrden({ pacientes = [], medicos = [] }) {
             onChange={(_, newValue) => setPatientId(newValue ? newValue.cedula : '')}
             fullWidth
           />
-
           <FormControl fullWidth margin="normal">
             <InputLabel>Prioridad</InputLabel>
             <Select

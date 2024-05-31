@@ -28,11 +28,10 @@ export default function Recomendaciones() {
       </Head>
 
       <Container maxWidth={themeStretch ? false : 'xl'}>
-        <Typography variant="h3" component="h1" paragraph>
-          Recomendaciones
-        </Typography>
-
-        <Box mb={2}>
+        <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+          <Typography variant="h3" component="h1">
+            Recomendaciones
+          </Typography>
           <Button variant="contained" onClick={handleActualizarRecomendaciones}>
             Actualizar Recomendaciones
           </Button>
