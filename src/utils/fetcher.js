@@ -8,7 +8,7 @@ const fetcher = async (url, options = {}) => {
 
   const finalOptions = {
     ...options,
-    mode: 'no-cors',
+   /*  mode: 'no-cors', */
     headers: {
       ...defaultHeaders,
       ...options.headers,
