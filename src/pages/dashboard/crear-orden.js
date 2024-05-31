@@ -1,60 +1,99 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
 import {
-  Container,
-  Typography,
-  Button,
-  Checkbox,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  FormGroup,
-  FormControlLabel,
-  TextField,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Autocomplete,
-  Box,
-  Fab
+  Container, Typography, Button, FormControl, InputLabel, Select, MenuItem, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Autocomplete
 } from '@mui/material';
+
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import DashboardLayout from '../../layouts/dashboard';
 import { useSettingsContext } from '../../components/settings';
 import { useRouter } from 'next/router';
 
-function MedicalProcedureForm() {
+//components
+import SelectorPreoperatorios from '@/sections/dashboard/crear-orden/selectorPreoperatorios';
+
+//services
+import { postOrdenService, getPacientes, getMedicos } from '@/services/fhirService';
+
+export const getServerSideProps = async () => {
+  try {
+    const dataPaciente = await getPacientes();
+    const dataMedicos = await getMedicos();
+
+    console.log("## pacientes", dataPaciente);
+
+    return { props: { pacientes: dataPaciente, medicos: dataMedicos } };
+  } catch (error) {
+
+    console.log("## error", error);
+
+    return { props: { data: null, error: error.message } };
+  }
+};
+
+CrearOrden.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
+
+const DEFAULT_PREOPERATORIOS = [
+  { id: 0, codigo: 306255001, disabled: true },
+  { id: 1, codigo: 308471005, disabled: true },
+]
+
+const POSIBLES_PREOPERATORIOS = [
+  { value: 306255001, label: 'Derivación a anestesista', disabled: true },
+  { value: 308471005, label: 'Derivación al cardiólogo', disabled: true },
+  { value: 27171005, label: 'Análisis de orina' },
+  { value: 301838008, label: 'Análisis de sangre' },
+  { value: 66238006, label: 'Análisis inmunorradiométrico' }
+]
+
+
+export default function CrearOrden({ pacientes = [], medicos = [] }) {
+  const { themeStretch } = useSettingsContext();
   const [procedure, setProcedure] = useState('');
   const [procedureName, setProcedureName] = useState('');
   const [doctorId, setDoctorId] = useState('');
   const [patientId, setPatientId] = useState('');
   const [priority, setPriority] = useState('');
-  const [roles, setRoles] = useState([{ id: '', role: '' }]);
+  const [roles, setRoles] = useState([{ id: 0, role: '' }]);
+  const [preoperatorios, setPreoperatorios] = useState(DEFAULT_PREOPERATORIOS);
+  const [horasEstimadas, setHoras] = useState('');
   const [preOps, setPreOps] = useState({
     anesthesia: true, // preseleccionado
     surgeon: true, // preseleccionado
     others: ''
   });
   const [openSummary, setOpenSummary] = useState(false);
+  useEffect(() => {
+    console.log(roles);
+  }, [roles])
 
-  const doctorOptions = [
-    { label: '12345678 - Leo Messi', id: 1 },
-    { label: '87654321 - Lucho Suarez', id: 2 }
-  ];
+  const doctorOptions = medicos.map((medico, index) => ({
+    ...medico,
+    label: `${medico.nombre} - ${medico.cedula}`,
+    id: index  // o cualquier otro identificador único que prefieras
+  }));
 
-  const patientOptions = [
-    { label: '12345679 - Diego Forlan', id: 1 },
-    { label: '98765432 - Edi Cavani', id: 2 }
-  ];
+  const patientOptions = pacientes.map((paciente, index) => ({
+    ...paciente,
+    label: `${paciente.nombre} - ${paciente.cedula}`,
+    id: index  // o cualquier otro identificador único que prefieras
+  }));
+
 
   const procedures = [
-    { value: 10, label: 'Procedimiento 1' },
-    { value: 20, label: 'Procedimiento 2' }
+    { value: 80146002, label: 'Apendicectomia' },
+    { value: 11466000, label: 'Operación cesárea' },
+    { value: 15732281000119103, label: 'Triquiasis de ambos ojos' },
+    { value: 414088005, label: 'Puente coronario de emergencia con injerto' }
   ];
+
+  const rolesCirugia = [
+    { value: 17561000, label: 'Cardiologo' },
+    { value: 88189002, label: 'Anestesista' },
+    { value: 78703002, label: 'Cirujano' },
+    { value: 158994007, label: 'Enfermero' },
+  ]
 
   const handleRoleChange = (index, event) => {
     const newRoles = roles.map((role, idx) => {
@@ -79,8 +118,27 @@ function MedicalProcedureForm() {
     setOpenSummary(true);
   };
 
-  const handleConfirm = () => {
-    console.log({ procedure, procedureName, doctorId, patientId, priority, roles, preOps });
+  const handleConfirm = async () => {
+    const rolesData = roles.map(({ role }) => {
+      return rolesCirugia.find(({ value }) => role == value)
+    })
+    const preoperatoriosData = preoperatorios.map(({ codigo }) => {
+      return POSIBLES_PREOPERATORIOS.find(({ value }) => codigo == value)
+    })
+    // const horasEstimadasCirugia = horasEstimadasIngresadas
+
+    const data = {
+      procedure,
+      procedureName,
+      doctorId,
+      patientId,
+      priority,
+      roles: rolesData,
+      preoperatorios: preoperatoriosData,
+      horasEstimadas: horasEstimadas
+    }
+    /* console.log(data); */
+    await postOrdenService(data)
     setOpenSummary(false);
   };
 
@@ -98,162 +156,131 @@ function MedicalProcedureForm() {
 
   return (
     <>
-      <Box display="flex" alignItems="center" mb={3}>
-        <FloatingActionButtons />
-        <Box flexGrow={1} textAlign="center">
-          <Typography variant="h4" gutterBottom>
-            Crear procedimiento médico
-          </Typography>
-        </Box>
-        <Box width={48} /> {/* Placeholder to balance the layout */}
-      </Box>
-      <form onSubmit={handleSubmit} style={{ marginTop: '20px' }}>
-        <FormControl fullWidth margin="normal">
-          <InputLabel>Procedimiento</InputLabel>
-          <Select
-            value={procedure}
-            onChange={handleProcedureChange}
-            label="Procedimiento"
-          >
-            {procedures.map((proc) => (
-              <MenuItem key={proc.value} value={proc.value}>{proc.label}</MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-
-        <Autocomplete
-          options={doctorOptions}
-          getOptionLabel={(option) => option.label}
-          renderInput={(params) => <TextField {...params} label="Doctor" margin="normal" />}
-          onChange={(event, newValue) => setDoctorId(newValue ? newValue.label : '')}
-          fullWidth
-        />
-
-        <Autocomplete
-          options={patientOptions}
-          getOptionLabel={(option) => option.label}
-          renderInput={(params) => <TextField {...params} label="Paciente" margin="normal" />}
-          onChange={(event, newValue) => setPatientId(newValue ? newValue.label : '')}
-          fullWidth
-        />
-
-        <FormControl fullWidth margin="normal">
-          <InputLabel>Prioridad</InputLabel>
-          <Select
-            value={priority}
-            onChange={e => setPriority(e.target.value)}
-            label="Prioridad"
-          >
-            <MenuItem value="Alta">Alta</MenuItem>
-            <MenuItem value="Media">Media</MenuItem>
-            <MenuItem value="Baja">Baja</MenuItem>
-          </Select>
-        </FormControl>
-
-        <Typography variant="h6" style={{ marginTop: '30px', marginBottom: '10px' }}>Roles necesarios</Typography>
-        {roles.map((role, index) => (
-          <FormControl key={index} fullWidth margin="normal">
-            <InputLabel>Rol {index + 1}</InputLabel>
-            <Select
-              value={role.role}
-              onChange={(e) => handleRoleChange(index, e)}
-              label={`Rol ${index + 1}`}
-            >
-              <MenuItem value="Anestesiólogo">Anestesiólogo</MenuItem>
-              <MenuItem value="Enfermero">Enfermero</MenuItem>
-            </Select>
-          </FormControl>
-        ))}
-
-        <Button onClick={addRole} startIcon={<AddCircleOutlineIcon />} style={{ marginTop: '10px', marginBottom: '20px' }}>
-          Agregar rol
-        </Button>
-
-        <Typography variant="h6" style={{ marginTop: '30px', marginBottom: '10px' }}>Preoperatorios necesarios</Typography>
-        <FormGroup>
-          <FormControlLabel
-            control={<Checkbox checked={preOps.anesthesia} />}
-            label="Anestesia"
-            disabled
-          />
-          <FormControlLabel
-            control={<Checkbox checked={preOps.surgeon} />}
-            label="Cardiologo"
-            disabled
-          />
-          <TextField
-            label="Otros preoperatorios"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            value={preOps.others}
-            onChange={e => setPreOps({ ...preOps, others: e.target.value })}
-          />
-        </FormGroup>
-
-        <Button type="submit" variant="contained" style={{ display: 'block', marginTop: '20px', marginLeft: 'auto', marginRight: 'auto' }}>
-          Crear procedimiento
-        </Button>
-      </form>
-
-      <Dialog open={openSummary} onClose={handleModify}>
-        <DialogTitle>Resumen del Procedimiento</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            <Typography variant="h6">Procedimiento</Typography>
-            <Typography>{procedureName}</Typography>
-            <Typography variant="h6">Cédula del Doctor</Typography>
-            <Typography>{doctorId}</Typography>
-            <Typography variant="h6">Cédula del Paciente</Typography>
-            <Typography>{patientId}</Typography>
-            <Typography variant="h6">Prioridad</Typography>
-            <Typography>{priority}</Typography>
-            <Typography variant="h6">Roles necesarios</Typography>
-            {roles.map((role, index) => (
-              <Typography key={index}>{`Rol ${index + 1}: ${role.role}`}</Typography>
-            ))}
-            <Typography variant="h6">Preoperatorios necesarios</Typography>
-            <Typography>Anestesia: {preOps.anesthesia ? 'Sí' : 'No'}</Typography>
-            <Typography>Cirujano: {preOps.surgeon ? 'Sí' : 'No'}</Typography>
-            <Typography>Otros preoperatorios: {preOps.others}</Typography>
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleModify} color="primary">Modificar</Button>
-          <Button onClick={handleConfirm} color="primary">Confirmar</Button>
-        </DialogActions>
-      </Dialog>
-    </>
-  );
-}
-
-function FloatingActionButtons() {
-  const router = useRouter()
-
-  return (
-    <Box sx={{ mr: 2 }}>
-      <Fab color="primary" aria-label="add" onClick={() => router.push('/dashboard/ordenes')}>
-        <ArrowBackIcon />
-      </Fab>
-    </Box>
-  );
-}
-
-PageOne.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
-
-export default function PageOne() {
-  const { themeStretch } = useSettingsContext();
-
-  return (
-    <>
       <Head>
         <title>Crear Orden | Dashboard</title>
       </Head>
 
       <Container maxWidth={themeStretch ? false : 'xl'}>
-        <MedicalProcedureForm />
+        <Typography variant="h4" align="center" gutterBottom>
+          Crear procedimiento médico
+        </Typography>
+        <form onSubmit={handleSubmit} style={{ marginTop: '20px' }}>
+          <FormControl fullWidth margin="normal">
+            <InputLabel>Procedimiento</InputLabel>
+            <Select
+              value={procedure}
+              onChange={handleProcedureChange}
+              label="Procedimiento"
+            >
+              {procedures.map((proc) => (
+                <MenuItem key={proc.value} value={proc.value}>{proc.label}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <Autocomplete
+            options={doctorOptions}
+            getOptionLabel={(option) => option.label}
+            renderInput={(params) => <TextField {...params} label="Doctor" margin="normal" />}
+            onChange={(_, newValue) => setDoctorId(newValue ? newValue.cedula : '')}
+            fullWidth
+          />
+
+          <Autocomplete
+            options={patientOptions}
+            getOptionLabel={(option) => option.label}
+            renderInput={(params) => <TextField {...params} label="Paciente" margin="normal" />}
+            onChange={(_, newValue) => setPatientId(newValue ? newValue.cedula : '')}
+            fullWidth
+          />
+          <FormControl fullWidth margin="normal">
+            <InputLabel>Prioridad</InputLabel>
+            <Select
+              value={priority}
+              onChange={e => setPriority(e.target.value)}
+              label="Prioridad"
+            >
+              <MenuItem value="Alta">Alta</MenuItem>
+              <MenuItem value="Media">Media</MenuItem>
+              <MenuItem value="Baja">Baja</MenuItem>
+            </Select>
+          </FormControl>
+
+          <Typography variant="h6" style={{ marginTop: '30px', marginBottom: '10px' }}>Roles necesarios</Typography>
+          {roles.map((role, index) => (
+            <FormControl key={index} fullWidth margin="normal">
+              <InputLabel>Rol {index + 1}</InputLabel>
+              <Select
+                value={role.role}
+                onChange={(e) => handleRoleChange(index, e)}
+                label={`Rol ${index + 1}`}
+              >
+                {rolesCirugia.map(({ value, label }) => (
+                  <MenuItem key={value} value={value}>{label}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          ))}
+
+          <Button onClick={addRole} startIcon={<AddCircleOutlineIcon />} style={{ marginTop: '10px', marginBottom: '20px' }}>
+            Agregar rol
+          </Button>
+
+          <Typography>
+            Horas estimadas
+          </Typography>
+          <FormControl fullWidth margin="normal">
+
+            <TextField
+              id="horasEstimadasIngresadas"
+              label="Horas"
+              variant="outlined"
+              value={horasEstimadas}  
+              onChange={e => setHoras(e.target.value)}  
+            />
+              
+
+          </FormControl>
+
+          <SelectorPreoperatorios
+            preoperatorios={preoperatorios}
+            setPreoperatorios={setPreoperatorios}
+            defaultPreOperatorios={POSIBLES_PREOPERATORIOS}
+          />
+
+          <Button type="submit" variant="contained" style={{ display: 'block', marginTop: '20px', marginLeft: 'auto', marginRight: 'auto' }}>
+            Crear procedimiento
+          </Button>
+        </form>
+
+        <Dialog open={openSummary} onClose={handleModify}>
+          <DialogTitle>Resumen del Procedimiento</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              <Typography variant="h6">Procedimiento</Typography>
+              <Typography>{procedureName}</Typography>
+              <Typography variant="h6">Cédula del doctor</Typography>
+              <Typography>{doctorId}</Typography>
+              <Typography variant="h6">Cédula del paciente</Typography>
+              <Typography>{patientId}</Typography>
+              <Typography variant="h6">Prioridad</Typography>
+              <Typography>{priority}</Typography>
+              <Typography variant="h6">Roles necesarios</Typography>
+              {roles.map((role, index) => (
+                <Typography key={index}>{`Rol ${index + 1}: ${role.role}`}</Typography>
+              ))}
+              <Typography variant="h6">Preoperatorios necesarios</Typography>
+              <Typography>Anestesia: {preOps.anesthesia ? 'Sí' : 'No'}</Typography>
+              <Typography>Cirujano: {preOps.surgeon ? 'Sí' : 'No'}</Typography>
+              <Typography>Otros preoperatorios: {preOps.others}</Typography>
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleModify} color="primary">Modificar</Button>
+            <Button onClick={handleConfirm} color="primary">Confirmar</Button>
+          </DialogActions>
+        </Dialog>
       </Container>
     </>
   );
 }
-
