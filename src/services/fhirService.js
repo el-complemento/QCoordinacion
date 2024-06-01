@@ -1,5 +1,5 @@
-import fetcher from "@/utils/fetcher";
-import { getFormattedDate } from "@/utils/getFormattedDate";
+import fetcher from '@/utils/fetcher';
+import { getFormattedDate } from '@/utils/getFormattedDate';
 
 export const getCirujiasService = async () => {
   const endpoint = `api/v1/encounters`;
@@ -8,97 +8,102 @@ export const getCirujiasService = async () => {
 
 export const postOrdenService = async (data) => {
   const endpoint = `api/v1/service-requests`;
-  console.log("dataCRUDA", data);
+  console.log('dataCRUDA', data);
+
+  const prioridades = {
+    Alta: 'asap',
+    Media: 'urgent',
+    Baja: 'routine',
+  };
 
   const formatoFhirPadre = {
-    "resourceType": "ServiceRequest",
-    "subject": {
-      "reference": `Patient/${data.patientId}`
+    resourceType: 'ServiceRequest',
+    subject: {
+      reference: `Patient/${data.patientId}`,
     },
-    "requester": {
-      "reference": `Practitioner/${data.doctorId}`
+    requester: {
+      reference: `Practitioner/${data.doctorId}`,
     },
-    "priority": "urgent",
-    "code": {
-      "concept": {
-        "coding": [
+    priority: prioridades[data.priority],
+    code: {
+      concept: {
+        coding: [
           {
-            "system": "http://snomed.ct",
-            "code": data.procedure
-          }
+            system: 'http://snomed.ct',
+            code: data.procedure,
+          },
         ],
-        "text": data.procedureName
-      }
+        text: data.procedureName,
+      },
     },
-    "status": "on-hold",
-    "occurrenceTiming": {
-      "repeat": {
-        "duration": data.horasEstimadas,
-        "durationUnit": "h"
-      }
+    status: 'on-hold',
+    occurrenceTiming: {
+      repeat: {
+        duration: data.horasEstimadas,
+        durationUnit: 'h',
+      },
     },
-    "performerType": {
-      coding: data.roles.map((rol) => (
-        {
-          "system": "http://snomed.ct",
-          "code": rol.value,
-          "display": rol.label
-        }
-      ))
+    performerType: {
+      coding: data.roles.map((rol) => ({
+        system: 'http://snomed.ct',
+        code: rol.value,
+        display: rol.label,
+      })),
     },
-    "authoredOn": getFormattedDate()
-  }
+    authoredOn: getFormattedDate(),
+  };
 
-  console.log("formatoFhirPadre", formatoFhirPadre);
+  console.log('formatoFhirPadre', formatoFhirPadre);
 
-   const idOrdenPadre = await fetcher(endpoint, {
-     method: 'POST',
-     body: JSON.stringify(formatoFhirPadre),
-   });
-   
+  const idOrdenPadre = await fetcher(endpoint, {
+    method: 'POST',
+    body: JSON.stringify(formatoFhirPadre),
+  });
 
   /* const idOrdenPadre = 1281978; */
 
-  console.log("idOrdenPadre", idOrdenPadre);
+  console.log('idOrdenPadre', idOrdenPadre);
 
   if (!idOrdenPadre) return null;
 
   data.preoperatorios.forEach(({ value, label }) => {
     const formatoFhirHijo = {
-      "resourceType": "ServiceRequest",
-      "basedOn": `ServiceRequest/${idOrdenPadre}`,
-      "subject": {
-        "reference": `Patient/${data.patientId}`
+      resourceType: 'ServiceRequest',
+      basedOn: {
+        reference: `ServiceRequest/${idOrdenPadre}`,
+        id: idOrdenPadre
       },
-      "requester": {
-        "reference": `Practitioner/${data.doctorId}`
+      subject: {
+        reference: `Patient/${data.patientId}`,
       },
-      "priority": "urgent",
-      "code": {
-        "concept": {
-          "coding": [
+      requester: {
+        reference: `Practitioner/${data.doctorId}`,
+      },
+      priority: 'urgent',
+      code: {
+        concept: {
+          coding: [
             {
-              "system": "http://snomed.ct",
-              "code": value
-            }
+              system: 'http://snomed.ct',
+              code: value,
+            },
           ],
-          "text": label
-        }
+          text: label,
+        },
       },
-      "status": "active",
-      "authoredOn": getFormattedDate()
-    }
-    console.log("formatoFhirHijos", formatoFhirHijo);
+      status: 'active',
+      authoredOn: getFormattedDate(),
+    };
+    console.log('formatoFhirHijos', formatoFhirHijo);
     fetcher(endpoint, {
       method: 'POST',
       body: JSON.stringify(formatoFhirHijo),
-    }).then(result => {
-      console.log("idOrdenHijo", result);
+    }).then((result) => {
+      console.log('idOrdenHijo', result);
     });
-  })
+  });
 
-
-  return /* await fetcher(endpoint, {
+  return; /* await fetcher(endpoint, {
     method: 'POST',
     body: JSON.stringify(data),
   }); */
@@ -107,14 +112,14 @@ export const postOrdenService = async (data) => {
 export const getPacientes = async () => {
   const endpoint = `api/v1/patients/cedulas`;
   return await fetcher(endpoint);
-}
+};
 
 export const getMedicos = async () => {
   const endpoint = `api/v1/practicioners`;
   return await fetcher(endpoint);
-}
+};
 
 export const getOrdenesService = async () => {
   const endpoint = `api/v1/service-requests`;
   return await fetcher(endpoint);
-}
+};
