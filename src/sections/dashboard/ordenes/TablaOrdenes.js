@@ -7,12 +7,13 @@ import { Paper, Table, TableBody, TableCell, TableContainer, TablePagination, Ta
 
 const COLUMNS = [
   { id: 'idOrden', label: 'Nro de orden', minWidth: 50 },
+  { id: 'status', label: 'Estado', minWidth: 170 },
   { id: 'paciente', label: 'Paciente', minWidth: 100 },
   { id: 'procedimiento', label: 'Procedimiento', minWidth: 100 },
   { id: 'prioridad', label: 'Prioridad', minWidth: 100 },
   /* { id: 'roles', label: 'Roles', minWidth: 200 }, */
   { id: 'horasEstimadas', label: 'Horas Estimadas', minWidth: 50 },
-  { id: 'fechaPedido', label: 'Fecha creación', minWidth: 170 }
+  { id: 'fechaPedido', label: 'Fecha creación', minWidth: 170 },
 ];
 
 /* {
