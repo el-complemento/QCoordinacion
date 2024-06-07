@@ -2,8 +2,29 @@
 import * as React from 'react';
 
 // @mui
-import { Paper, Table, TableBody, TableCell, TableContainer, TablePagination, TableHead, TableRow } from '@mui/material';
+import {
+  Paper,
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TablePagination,
+  TableHead,
+  TableRow,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  List,
+  Button,
+  Checkbox,
+  ListItem,
+  ListItemText,
+  ListItemSecondaryAction,
+} from '@mui/material';
 
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 const COLUMNS = [
   { id: 'idOrden', label: 'Nro de orden', minWidth: 50 },
@@ -11,7 +32,7 @@ const COLUMNS = [
   { id: 'paciente', label: 'Paciente', minWidth: 100 },
   { id: 'procedimiento', label: 'Procedimiento', minWidth: 100 },
   { id: 'prioridad', label: 'Prioridad', minWidth: 100 },
-  /* { id: 'roles', label: 'Roles', minWidth: 200 }, */
+  { id: 'preoperatorios', label: 'Preoperatorios', minWidth: 50 },
   { id: 'horasEstimadas', label: 'Horas Estimadas', minWidth: 50 },
   { id: 'fechaPedido', label: 'Fecha creación', minWidth: 170 },
 ];
@@ -26,9 +47,12 @@ const COLUMNS = [
   prioridad: 'Urgent'
 } */
 
-export default function TablaOrdenes({ ordenes = [] }) {
+export default function TablaOrdenes({ ordenes = [], preoperatorios = [] }) {
+  console.log(preoperatorios);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [selectedOrder, setSelectedOrder] = React.useState(null);
+  const [openModal, setOpenModal] = React.useState(false);
 
   const handleChangePage = (_, newPage) => {
     setPage(newPage);
@@ -37,6 +61,39 @@ export default function TablaOrdenes({ ordenes = [] }) {
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
+  };
+
+  const allPreoperatoriosDone = (idPadre) => {
+    console.log('idPadre', idPadre);
+    const preoperatoriosHijo = preoperatorios[idPadre];
+
+    if (preoperatoriosHijo) {
+      console.log(
+        "preoperatoriosHijo.every((p) => p?.status === 'Completed')",
+        preoperatoriosHijo.every((p) => p?.status === 'Completed')
+      );
+      return preoperatoriosHijo.every((p) => p?.status === 'Completed');
+    }
+    console.log('preoperatoriosHijo', preoperatoriosHijo);
+    //return preoperatorios.every((p) => p?.done)
+    return false;
+  };
+
+  const handleClickOpen = (order) => {
+    console.log(order);
+    setSelectedOrder(order);
+    setOpenModal(true);
+  };
+
+  const handleClose = () => {
+    setOpenModal(false);
+    setSelectedOrder(null);
+  };
+
+  const handlePreoperatorioChange = (preoperatorio) => {
+    const updatedOrder = { ...selectedOrder };
+    /* updatedOrder.preoperatorios[index].done = !updatedOrder.preoperatorios[index].done; */
+    /* setSelectedOrder(updatedOrder); */
   };
 
   return (
@@ -57,24 +114,39 @@ export default function TablaOrdenes({ ordenes = [] }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {ordenes
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row) => {
-                return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.idOrden}>
-                    {COLUMNS.map((column) => {
-                      const value = row[column.id];
+            {ordenes.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+              return (
+                <TableRow
+                  hover
+                  role="checkbox"
+                  tabIndex={-1}
+                  key={row.idOrden}
+                  onClick={() => handleClickOpen(row)}
+                >
+                  {COLUMNS.map((column) => {
+                    const value = row[column.id];
+
+                    if (column.id === 'preoperatorios') {
                       return (
                         <TableCell key={column.id} align={column.align}>
-                          {column.format && typeof value === 'number'
-                            ? column.format(value)
-                            : value}
+                          {allPreoperatoriosDone(row['idOrden']) ? (
+                            <CheckCircleIcon color="success" />
+                          ) : (
+                            'Pendientes'
+                          )}
                         </TableCell>
                       );
-                    })}
-                  </TableRow>
-                );
-              })}
+                    }
+
+                    return (
+                      <TableCell key={column.id} align={column.align}>
+                        {column.format && typeof value === 'number' ? column.format(value) : value}
+                      </TableCell>
+                    );
+                  })}
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </TableContainer>
@@ -87,6 +159,50 @@ export default function TablaOrdenes({ ordenes = [] }) {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
+      <Dialog open={openModal} onClose={handleClose}>
+        <DialogTitle>Detalles de la Orden</DialogTitle>
+        <DialogContent>
+          {selectedOrder && (
+            <>
+              {/* 
+            {
+              "horasEstimadas": "4",
+              "rolesNecesarios": [
+                  "Anestesista",
+                  "Cardiologo"
+              ],
+              "paciente": "John Doe",
+              "fechaPedido": "Tue Jun 04 21:18:56 UYT 2024",
+              "procedimiento": "Puente coronario de emergencia con injerto",
+              "idOrden": "452",
+              "prioridad": "Urgent",
+              "status": "Draft"
+            } */}
+              <Typography>Nro de orden: {selectedOrder.idOrden}</Typography>
+              <Typography>Paciente: {selectedOrder.paciente}</Typography>
+              <Typography>Procedimiento: {selectedOrder.procedimiento}</Typography>
+              <Typography>Prioridad: {selectedOrder.prioridad}</Typography>
+              <List>
+                {preoperatorios[selectedOrder.idOrden].map((preoperatorio, index) => (
+                  <ListItem key={index}>
+                    <ListItemText primary={preoperatorio.title} />
+                    <ListItemSecondaryAction>
+                      <Checkbox
+                        edge="end"
+                        onChange={() => handlePreoperatorioChange(preoperatorio)}
+                        checked={preoperatorio?.status === 'Completed'}
+                      />
+                    </ListItemSecondaryAction>
+                  </ListItem>
+                ))}
+              </List>
+            </>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cerrar</Button>
+        </DialogActions>
+      </Dialog>
     </Paper>
   );
 }

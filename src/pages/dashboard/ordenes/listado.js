@@ -1,3 +1,5 @@
+import { useCallback } from 'react';
+
 // next
 import Head from 'next/head';
 
@@ -12,9 +14,7 @@ import { useSettingsContext } from '@/components/settings';
 import TablaOrdenes from '@/sections/dashboard/ordenes/TablaOrdenes';
 
 // services
-import { getOrdenesService } from '@/services/fhirService';
-
-
+import { getOrdenesService, getPreoperatoriosService } from '@/services/fhirService';
 
 // ----------------------------------------------------------------------
 
@@ -24,11 +24,14 @@ Ordenes.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 
 export const getServerSideProps = async () => {
   try {
-    const data = await getOrdenesService();
+    const ordenes = await getOrdenesService();
 
-    console.log("## ORDENES", data);
+    const preoperatorios = await getPreoperatoriosService();
 
-    return { props: { ordenes: data } };
+    console.log('## ORDENES', ordenes);
+    console.log('## PREOPERATORIOS', preoperatorios);
+
+    return { props: { ordenes, preoperatorios } };
   } catch (error) {
     return { props: { data: null, error: error.message } };
   }
@@ -36,24 +39,23 @@ export const getServerSideProps = async () => {
 
 // ----------------------------------------------------------------------
 
-export default function Ordenes({ ordenes = [], error = "" }) {
+export default function Ordenes({ ordenes = [], preoperatorios = [], error = '' }) {
   const { themeStretch } = useSettingsContext();
 
+  const preoperatoriosPorPadre = useCallback(() => {
+    const dictPreoperatorios = {};
 
-  const getOrdenes = () => {
-    const ordenesFormateadas = ordenes.map(orden => ({
-      ...orden,
-      paciente: orden.paciente,
-      procedimiento: orden.procedimiento,
-      numeroDeOrden: orden.idOrden,
-      prioridad: orden.prioridad,
-      roles: orden.rolesNecesarios,
-      horasEstimadas: orden.horasEstimadas
-    }))
-    console.log(ordenesFormateadas)
-    return ordenesFormateadas
-  }
+    preoperatorios.forEach((preoperatorio) => {
+      const { idOrdenPadre } = preoperatorio;
+      if (dictPreoperatorios[idOrdenPadre]) {
+        dictPreoperatorios[idOrdenPadre].push(preoperatorio);
+      } else {
+        dictPreoperatorios[idOrdenPadre] = [preoperatorio];
+      }
+    });
 
+    return dictPreoperatorios;
+  }, [preoperatorios]);
 
   return (
     <>
@@ -62,19 +64,23 @@ export default function Ordenes({ ordenes = [], error = "" }) {
       </Head>
 
       <Container maxWidth={themeStretch ? false : 'xl'}>
-        <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2} mb={3}>
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+          spacing={2}
+          mb={3}
+        >
           <Typography variant="h3" component="h1">
             Ordenes
           </Typography>
           <Stack direction="row" spacing={2}>
             <Button variant="contained">Crear Orden</Button>
           </Stack>
-
         </Stack>
 
-        <TablaOrdenes ordenes={ordenes}/>
+        <TablaOrdenes ordenes={ordenes} preoperatorios={preoperatoriosPorPadre()} />
       </Container>
     </>
   );
 }
-

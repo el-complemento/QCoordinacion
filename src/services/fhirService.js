@@ -123,3 +123,8 @@ export const getOrdenesService = async () => {
   const endpoint = `api/v1/service-requests`;
   return await fetcher(endpoint);
 };
+
+export const getPreoperatoriosService = async () => {
+  const endpoint = `api/v1/service-requests/preoperatorios`;
+  return await fetcher(endpoint);
+};
