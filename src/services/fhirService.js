@@ -109,6 +109,30 @@ export const postOrdenService = async (data) => {
   }); */
 };
 
+export const postPacienteService = async (paciente) => {
+  const endpoint = `api/v1/patients`;
+  const patientFHIRFormat = {
+    resourceType: "Patient",
+    id: paciente.id,
+    name: [
+      {
+        use: "official",
+        family: paciente.name.family,
+        given: [paciente.name.given]
+      }
+    ],
+    gender: paciente.gender,
+    birthDate: paciente.birthDate
+  };
+
+  console.log('patientFHIRFormat', patientFHIRFormat);
+
+  return await fetcher(endpoint, {
+    method: 'PUT',
+    body: JSON.stringify(patientFHIRFormat),
+  });
+};
+
 export const getPacientes = async () => {
   const endpoint = `api/v1/patients/cedulas`;
   return await fetcher(endpoint);

@@ -31,6 +31,7 @@ const navConfig = [
         children: [
           { title: 'Ver ordenes', path: PATH_DASHBOARD.ordenes.verOrdenes },
           { title: 'Crear orden', path: PATH_DASHBOARD.ordenes.crearOrden },
+          { title: 'Crear Paciente', path: PATH_DASHBOARD.ordenes.crearPaciente },
         ],
       },
       { title: 'Coordinar', path: PATH_DASHBOARD.recomendaciones, icon: ICONS.Activity },

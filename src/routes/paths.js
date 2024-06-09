@@ -24,6 +24,7 @@ export const PATH_DASHBOARD = {
     root: path(ROOTS_DASHBOARD, '/ordenes'),
     verOrdenes: path(ROOTS_DASHBOARD, '/ordenes/listado'),
     crearOrden: path(ROOTS_DASHBOARD, '/ordenes/crear-orden'),
+    crearPaciente: path(ROOTS_DASHBOARD, '/ordenes/crear-paciente')
   },
   coordinar: path(ROOTS_DASHBOARD, '/coordinar'),
   user: {
