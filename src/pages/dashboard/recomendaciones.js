@@ -1,25 +1,64 @@
+import { useState } from 'react';
 import Head from 'next/head';
 import { Container, Typography, Button, Box } from '@mui/material';
 import DashboardLayout from '../../layouts/dashboard';
 import { useSettingsContext } from '../../components/settings';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+} from '@mui/material';
+
+import {
+  ejecutarAlgoritmoService,
+  getAppointmentsService,
+  aceptarRecomendacionService,
+} from '@/services/fhirService';
 
 Recomendaciones.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 
-export default function Recomendaciones() {
-  const { themeStretch } = useSettingsContext();
+// ----------------------------------------------------------------------
 
-  const handleActualizarRecomendaciones = () => {
-    window.location.reload();
+export const getServerSideProps = async () => {
+  try {
+    const appointments = await getAppointmentsService();
+
+    console.log('## appointments', appointments);
+
+    return { props: { initialAppointments: appointments } };
+  } catch (error) {
+    return { props: { data: null, error: error.message } };
+  }
+};
+
+// ----------------------------------------------------------------------
+
+export default function Recomendaciones({ initialAppointments }) {
+  const { themeStretch } = useSettingsContext();
+  const [appointments, setAppointments] = useState(initialAppointments);
+  const handleEjecutarAlgoritmo = async () => {
+    const response = await ejecutarAlgoritmoService();
+
+    console.log('Response algoritmo', response);
   };
 
-  const data = [
-    { id: 1, codigo: '1234', paciente: '64872230', fecha: '22/5/2024', medicos: 'Medico 1' },
-    { id: 2, codigo: '5678', paciente: '64872231', fecha: '23/5/2024', medicos: 'Medico 2' },
-    { id: 3, codigo: '9101', paciente: '64872232', fecha: '24/5/2024', medicos: 'Medico 3' },
-    { id: 4, codigo: '1121', paciente: '64872233', fecha: '25/5/2024', medicos: 'Medico 4' },
-    { id: 5, codigo: '3141', paciente: '64872234', fecha: '26/5/2024', medicos: 'Medico 5' },
-  ];
+  const handleConfirmarRecomendacion = async (recomendacion) => {
+    const response = await aceptarRecomendacionService(recomendacion.idAppontment);
+    console.log("handleConfirmarRecomendacion",response);
+    setAppointments(await getAppointmentsService());
+  };
+
+  const getTimeFormatted = (date) => {
+    // Convert to a format that JavaScript can parse
+    const [dayOfWeek, month, day, time, timezone, year] = date.split(' ');
+    const jsDateString = `${month} ${day} ${year} ${time} GMT-3`; // Adjust GMT offset for UYT\
+
+    return new Date(jsDateString);
+  };
 
   return (
     <>
@@ -32,35 +71,44 @@ export default function Recomendaciones() {
           <Typography variant="h3" component="h1">
             Recomendaciones
           </Typography>
-          <Button variant="contained" onClick={handleActualizarRecomendaciones}>
-            Actualizar Recomendaciones
+          <Button variant="contained" onClick={handleEjecutarAlgoritmo}>
+            Ejecutar algoritmo
           </Button>
         </Box>
-
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>ID</TableCell>
                 <TableCell>Código</TableCell>
+                <TableCell>Procedimiento</TableCell>
                 <TableCell>Paciente</TableCell>
                 <TableCell>Fecha</TableCell>
+                <TableCell>Desde</TableCell>
+                <TableCell>Hasta</TableCell>
                 <TableCell>Médicos</TableCell>
+                <TableCell>Quirófano</TableCell>
                 <TableCell>Acciones</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {data.map((item) => (
-                <TableRow key={item.id}>
-                  <TableCell>{item.id}</TableCell>
-                  <TableCell>{item.codigo}</TableCell>
+              {appointments.map((item) => (
+                <TableRow key={item.idOrden}>
+                  <TableCell>{item.idOrden}</TableCell>
+                  <TableCell>{item.title}</TableCell>
                   <TableCell>{item.paciente}</TableCell>
-                  <TableCell>{item.fecha}</TableCell>
-                  <TableCell>{item.medicos}</TableCell>
+                  <TableCell>{getTimeFormatted(item.start).toDateString()}</TableCell>
+                  <TableCell>{getTimeFormatted(item.start).toTimeString()}</TableCell>
+                  <TableCell>{getTimeFormatted(item.end).toTimeString()}</TableCell>
+                  <TableCell>{item.doctores.join(', ')}</TableCell>
+                  <TableCell>{item.quirofano}</TableCell>
                   <TableCell>
                     <Box display="flex" gap={1}>
-                      <Button variant="contained">Confirmar</Button>
-                      <Button variant="outlined">Editar</Button>
+                      <Button
+                        variant="contained"
+                        onClick={() => handleConfirmarRecomendacion(item)}
+                      >
+                        Confirmar
+                      </Button>
                     </Box>
                   </TableCell>
                 </TableRow>

@@ -1,3 +1,4 @@
+import Ordenes from '@/pages/dashboard/ordenes/listado';
 import fetcher from '@/utils/fetcher';
 import { getFormattedDate } from '@/utils/getFormattedDate';
 
@@ -71,7 +72,7 @@ export const postOrdenService = async (data) => {
       resourceType: 'ServiceRequest',
       basedOn: {
         reference: `ServiceRequest/${idOrdenPadre}`,
-        id: idOrdenPadre
+        id: idOrdenPadre,
       },
       subject: {
         reference: `Patient/${data.patientId}`,
@@ -126,5 +127,27 @@ export const getOrdenesService = async () => {
 
 export const getPreoperatoriosService = async () => {
   const endpoint = `api/v1/service-requests/preoperatorios`;
+  return await fetcher(endpoint);
+};
+
+export const marcarPreoperatorioCompletoService = async (idOrden) => {
+  const endpoint = `api/v1/service-requests/${idOrden}`;
+  return await fetcher(endpoint, {
+    method: 'PUT',
+  });
+};
+
+export const getAppointmentsService = async () => {
+  const endpoint = `api/v1/appointments/recomendadas`;
+  return await fetcher(endpoint);
+};
+
+export const aceptarRecomendacionService = async (id) => {
+  const endpoint = `api/v1/appointments/aceptar/${id}`;
+  return await fetcher(endpoint);
+};
+
+export const ejecutarAlgoritmoService = async () => {
+  const endpoint = `api/v1/algoritmo`;
   return await fetcher(endpoint);
 };
