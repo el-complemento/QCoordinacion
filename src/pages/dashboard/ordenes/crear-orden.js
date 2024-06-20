@@ -149,6 +149,7 @@ export default function CrearOrden({ pacientes = [], medicos = [] }) {
     };
     /* console.log(data); */
     await postOrdenService(data);
+    alert("Orden creada correctamente!")
     setOpenSummary(false);
   };
 
