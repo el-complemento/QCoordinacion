@@ -22,7 +22,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import DashboardLayout from '@/layouts/dashboard/DashboardLayout';
 import { useSettingsContext } from '@/components/settings';
 import { useRouter } from 'next/router';
-
+import { LoadingButton } from '@mui/lab';
 //components
 import SelectorPreoperatorios from '@/sections/dashboard/crear-orden/selectorPreoperatorios';
 
@@ -74,6 +74,8 @@ export default function CrearOrden({ pacientes = [], medicos = [] }) {
     surgeon: true, // preseleccionado
     others: '',
   });
+  const [isLoading, setIsLoading] = useState(false);
+
   const [openSummary, setOpenSummary] = useState(false);
   useEffect(() => {
     console.log(roles);
@@ -149,7 +151,9 @@ export default function CrearOrden({ pacientes = [], medicos = [] }) {
     };
     /* console.log(data); */
     await postOrdenService(data);
+    setIsLoading(true);
     alert("Orden creada correctamente!")
+    setIsLoading(false)
     setOpenSummary(false);
   };
 
@@ -295,9 +299,9 @@ export default function CrearOrden({ pacientes = [], medicos = [] }) {
             <Button onClick={handleModify} color="primary">
               Modificar
             </Button>
-            <Button onClick={handleConfirm} color="primary">
+            <LoadingButton onClick={handleConfirm} color="primary" isLoading={isLoading}>
               Confirmar
-            </Button>
+            </LoadingButton>
           </DialogActions>
         </Dialog>
       </Container>
