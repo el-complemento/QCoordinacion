@@ -40,16 +40,24 @@ export const getServerSideProps = async () => {
 export default function Recomendaciones({ initialAppointments }) {
   const { themeStretch } = useSettingsContext();
   const [appointments, setAppointments] = useState(initialAppointments);
-  const handleEjecutarAlgoritmo = async () => {
-    const response = await ejecutarAlgoritmoService();
+  const [isLoading, setIsLoading] = useState(false);
+  
 
+  const handleEjecutarAlgoritmo = async () => {
+    setIsLoading(true);
+    const response = await ejecutarAlgoritmoService();
+    alert("El algoritmo se termino de ejecutar correctamente!")
+    setIsLoading(false);
     console.log('Response algoritmo', response);
   };
 
   const handleConfirmarRecomendacion = async (recomendacion) => {
+    setIsLoading(true);
     const response = await aceptarRecomendacionService(recomendacion.idAppontment);
-    console.log("handleConfirmarRecomendacion",response);
+
+    alert("Recomendacion confirmada!")
     setAppointments(await getAppointmentsService());
+    setIsLoading(false);
   };
 
   const getTimeFormatted = (date) => {
@@ -71,7 +79,7 @@ export default function Recomendaciones({ initialAppointments }) {
           <Typography variant="h3" component="h1">
             Recomendaciones
           </Typography>
-          <Button variant="contained" onClick={handleEjecutarAlgoritmo}>
+          <Button variant="contained" onClick={handleEjecutarAlgoritmo} disabled={isLoading}>
             Ejecutar algoritmo
           </Button>
         </Box>
@@ -106,6 +114,7 @@ export default function Recomendaciones({ initialAppointments }) {
                       <Button
                         variant="contained"
                         onClick={() => handleConfirmarRecomendacion(item)}
+                        disabled={isLoading}
                       >
                         Confirmar
                       </Button>
