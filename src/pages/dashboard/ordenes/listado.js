@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 
 // next
 import Head from 'next/head';
@@ -41,11 +41,13 @@ export const getServerSideProps = async () => {
 
 export default function Ordenes({ ordenes = [], preoperatorios = [], error = '' }) {
   const { themeStretch } = useSettingsContext();
+  const [ordenesList, setOrdenesList] = useState(ordenes)
+  const [preoperatoriosList, setPreoperatoriosList] = useState(preoperatorios)
 
   const preoperatoriosPorPadre = useCallback(() => {
     const dictPreoperatorios = {};
 
-    preoperatorios.forEach((preoperatorio) => {
+    preoperatoriosList.forEach((preoperatorio) => {
       const { idOrdenPadre } = preoperatorio;
       if (dictPreoperatorios[idOrdenPadre]) {
         dictPreoperatorios[idOrdenPadre].push(preoperatorio);
@@ -55,7 +57,14 @@ export default function Ordenes({ ordenes = [], preoperatorios = [], error = '' 
     });
 
     return dictPreoperatorios;
-  }, [preoperatorios]);
+  }, [preoperatoriosList]);
+
+  const handleActualizarTodo = async () => {
+    const ordenesNuevas = await getOrdenesService();
+    const preoperatoriosNuevas = await getPreoperatoriosService();
+    setPreoperatoriosList(preoperatoriosNuevas)
+    setOrdenesList(ordenesNuevas)
+  };
 
   return (
     <>
@@ -79,7 +88,11 @@ export default function Ordenes({ ordenes = [], preoperatorios = [], error = '' 
           </Stack>
         </Stack>
 
-        <TablaOrdenes ordenes={ordenes} preoperatorios={preoperatoriosPorPadre()} />
+        <TablaOrdenes
+          ordenes={ordenesList}
+          preoperatorios={preoperatoriosPorPadre()}
+          handleActualizarTodo={handleActualizarTodo}
+        />
       </Container>
     </>
   );

@@ -26,6 +26,8 @@ import {
 
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
+import { marcarPreoperatorioCompletoService } from '@/services/fhirService';
+
 const COLUMNS = [
   { id: 'idOrden', label: 'Nro de orden', minWidth: 50 },
   { id: 'status', label: 'Estado', minWidth: 170 },
@@ -47,7 +49,11 @@ const COLUMNS = [
   prioridad: 'Urgent'
 } */
 
-export default function TablaOrdenes({ ordenes = [], preoperatorios = [] }) {
+export default function TablaOrdenes({
+  ordenes = [],
+  preoperatorios = [],
+  handleActualizarTodo = () => {},
+}) {
   console.log(preoperatorios);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -90,16 +96,39 @@ export default function TablaOrdenes({ ordenes = [], preoperatorios = [] }) {
     setSelectedOrder(null);
   };
 
-  const handlePreoperatorioChange = (preoperatorio) => {
+  const handlePreoperatorioChange = async (preoperatorio) => {
     const updatedOrder = { ...selectedOrder };
-    /* updatedOrder.preoperatorios[index].done = !updatedOrder.preoperatorios[index].done; */
-    /* setSelectedOrder(updatedOrder); */
+
+    const respuesta = await marcarPreoperatorioCompletoService(preoperatorio.idOrden);
+
+    if (!respuesta) {
+      console.log('AYUDAA');
+      return;
+    }
+    await handleActualizarTodo();
+    alert(
+      `El preoperatorio con ID: #${preoperatorio.idOrden} fue marcado como completado correctamente.`
+    );
+
+    /* const preoperatoriosViejos = preoperatoriosGOD[preoperatorio.idOrdenPadre].map((item) => {
+      if (item.idOrden == preoperatorio.idOrden) {
+        item.status = 'Completed';
+      }
+      return item;
+    });
+    console.log(preoperatoriosViejos);
+
+    preoperatoriosGOD[preoperatorio.idOrdenPadre] = preoperatoriosViejos; */
+
+    /*     const actualizados = await handleActualizarPreoperatorios()
+    console.log(actualizados); */
+    /* setPreoperatoriosGOD() */
   };
 
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
       <TableContainer sx={{ maxHeight: 440 }}>
-        <Table stickyHeader aria-label="Tabla de ordenes">
+        <Table stickyHeader aria-label="Tabla de órdenes">
           <TableHead>
             <TableRow>
               {COLUMNS.map((column) => (
@@ -183,7 +212,7 @@ export default function TablaOrdenes({ ordenes = [], preoperatorios = [] }) {
               <Typography>Procedimiento: {selectedOrder.procedimiento}</Typography>
               <Typography>Prioridad: {selectedOrder.prioridad}</Typography>
               <List>
-                {preoperatorios[selectedOrder.idOrden].map((preoperatorio, index) => (
+                {preoperatorios[selectedOrder.idOrden]?.map((preoperatorio, index) => (
                   <ListItem key={index}>
                     <ListItemText primary={preoperatorio.title} />
                     <ListItemSecondaryAction>
