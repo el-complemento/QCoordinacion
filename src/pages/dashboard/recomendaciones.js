@@ -13,11 +13,15 @@ import {
   Paper,
 } from '@mui/material';
 
+import LoadingButton from '@mui/lab/LoadingButton';
+
 import {
   ejecutarAlgoritmoService,
   getAppointmentsService,
   aceptarRecomendacionService,
 } from '@/services/fhirService';
+
+
 
 Recomendaciones.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 
@@ -41,6 +45,7 @@ export default function Recomendaciones({ initialAppointments }) {
   const { themeStretch } = useSettingsContext();
   const [appointments, setAppointments] = useState(initialAppointments);
   const [isLoading, setIsLoading] = useState(false);
+  const [ejecutandoAlgoritmo, setEjecutandoAlgoritmo] = useState(false);
   
 
   const handleEjecutarAlgoritmo = async () => {
@@ -53,11 +58,13 @@ export default function Recomendaciones({ initialAppointments }) {
 
   const handleConfirmarRecomendacion = async (recomendacion) => {
     setIsLoading(true);
-    const response = await aceptarRecomendacionService(recomendacion.idAppontment);
+    setEjecutandoAlgoritmo(true)
+    await aceptarRecomendacionService(recomendacion.idAppontment);
 
     alert("Recomendacion confirmada!")
-    setAppointments(await getAppointmentsService());
+    setEjecutandoAlgoritmo(false)
     setIsLoading(false);
+    setAppointments(await getAppointmentsService());
   };
 
   const getTimeFormatted = (date) => {
@@ -79,9 +86,9 @@ export default function Recomendaciones({ initialAppointments }) {
           <Typography variant="h3" component="h1">
             Recomendaciones
           </Typography>
-          <Button variant="contained" onClick={handleEjecutarAlgoritmo} disabled={isLoading}>
+          <LoadingButton variant="contained" onClick={handleEjecutarAlgoritmo} disabled={isLoading} loading={ejecutandoAlgoritmo}>
             Ejecutar algoritmo
-          </Button>
+          </LoadingButton>
         </Box>
         <TableContainer component={Paper}>
           <Table>
