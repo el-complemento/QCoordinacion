@@ -189,7 +189,7 @@ export default function CrearOrden({ pacientes = [], medicos = [] }) {
           <Autocomplete
             options={doctorOptions}
             getOptionLabel={(option) => option.label}
-            renderInput={(params) => <TextField {...params} label="Doctor" margin="normal" />}
+            renderInput={(params) => <TextField {...params} label="Médico" margin="normal" />}
             onChange={(_, newValue) => setDoctorId(newValue ? newValue.cedula : '')}
             fullWidth
           />
@@ -197,7 +197,7 @@ export default function CrearOrden({ pacientes = [], medicos = [] }) {
           <Autocomplete
             options={patientOptions}
             getOptionLabel={(option) => option.label}
-            renderInput={(params) => <TextField {...params} label="Paciente" margin="normal" />}
+            renderInput={(params) => <TextField {...params} label="Usuario de la salud" margin="normal" />}
             onChange={(_, newValue) => setPatientId(newValue ? newValue.cedula : '')}
             fullWidth
           />
